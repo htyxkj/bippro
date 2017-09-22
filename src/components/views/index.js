@@ -1,5 +1,6 @@
-import ReportUI from './reportLayUI';
+import ReportUI from './report';
 import Common from './common';
+import Bill from './bill';
 
 export default function install(Vue) {
   if (install.installed) {
@@ -9,6 +10,7 @@ export default function install(Vue) {
 
   install.installed = true;
   Vue.use(Common);
-  Vue.component('md-report-ui', ReportUI);
+  Vue.use(ReportUI);
+  Vue.use(Bill);
 
 }

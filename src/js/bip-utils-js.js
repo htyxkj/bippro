@@ -26,6 +26,10 @@ export default {
       return returnobj
     }
 
+    Vue.prototype.getUserInfo = function () {
+      return JSON.parse(window.localStorage.getItem('user'))
+    }
+
     Vue.prototype.tableDataRef = function (layoutCel, vdatas) {
       for (var i = 0; i < layoutCel.cels.length; i++) {
         var cel = layoutCel.cels[i]

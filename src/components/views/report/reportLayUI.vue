@@ -101,7 +101,9 @@ export default {
         'pageSize': this.pageInfo.size,
         'cellid': ''
       }
-      this.getDataByAPINew(data1,this.getCallBack,this.getCallError)
+      if (this.mparams.pcell) {
+        this.getDataByAPINew(data1,this.getCallBack,this.getCallError)
+      }
     },
     onTablePagination (pager) {
       this.pageInfo.page = pager.page;
@@ -140,6 +142,7 @@ export default {
       this.current = 1;
       this.pageSize = 20;
       this.vdatas = {};
+      this.pages = {};
       this.fetchUIData();
     }
   },
@@ -147,17 +150,13 @@ export default {
   watch: {
     'mparams': function (){
       console.log('watch')
-
       this.initUI()
     }
   },
   mounted () {
-
     if(this.mparams){
       this.initUI()
-      console.log('mounted')
     }
-
   }
 }
 </script>

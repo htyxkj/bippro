@@ -1,12 +1,11 @@
 <template>
   <div>
-    <app-ui v-if="mparams&&mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></app-ui>
-    <md-report-ui v-else :mdTitle="menuTitle" :mparams="mparams"></md-report-ui>
+    <md-bip-bill v-if="mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-bill>
+    <md-bip-report v-if="!mparams.beBill" :mdTitle="menuTitle" :mparams="mparams"></md-bip-report>
   </div>
 </template>
 
 <script>
-import AppletLayUI from './bill/appletLayUI';
 export default {
   data () {
     return {
@@ -40,7 +39,6 @@ export default {
       console.log(res)
     }
   },
-  components: {'app-ui': AppletLayUI},
   watch: {
     '$route': ['fetchParams']
   },

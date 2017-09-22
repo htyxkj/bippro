@@ -119,8 +119,6 @@
       this.$nextTick(() => {
         this.canFireEvents = true;
       });
-      console.log(this.mdSize)
-
     }
   };
 </script>

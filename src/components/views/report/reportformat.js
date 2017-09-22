@@ -1,4 +1,4 @@
-import common from '../core/utils/common.js';
+import common from '../../core/utils/common.js';
 export default {
   data () {
     return {
