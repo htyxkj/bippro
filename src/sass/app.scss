@@ -2,17 +2,4 @@
 @import './core/core';
 @import './core/mixins';
 @import './components/component';
-// @import './layout/layouts.scss';
-
-.md-table-cell-container{
-  white-space: nowrap;
-}
-.md-table .md-table-cell{
-  height: .4rem
-}
-.md-table-row{
-  height: 5px;
-}
-.md-tr-color{
-  background-color: #e0e0e0;
-}
+@import './bill.scss';
