@@ -1,4 +1,9 @@
 import common from '../../core/utils/common.js';
+const defPageInfo = {
+  size:20,
+  total:0,
+  page:1
+}
 export default {
   data () {
     return {
@@ -33,13 +38,12 @@ export default {
     paging (id) {
     },
     fetchUIData () {
-      var contCelStr = ''
       var data1 = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAM,
         'pcell': this.mparams.pcell,
-        'pdata': contCelStr,
+        'pdata': '',
         'bebill': this.mparams.beBill ? 1 : 2,
         'currentPage': this.pageInfo.page,
         'pageSize': this.pageInfo.size,
@@ -55,15 +59,16 @@ export default {
       this.fetchUIData();
     },
     getCallBack(res){
-      if (res.data.id === 0) {
+      if (res.data.id >= 0) {
         this.layoutCel = res.data.data.layCels;
-        this.subLayCells = this.layoutCel.subLayCells[0];
         this.subCellsCount = this.layoutCel.subLayCells ? this.layoutCel.subLayCells.length : 0;
+        this.subLayCells =  this.subCellsCount >0 ? this.layoutCel.subLayCells[0]: null;
         this.pages = res.data.data.pages;
         this.pageInfo.page = this.pages.currentPage;
         this.pageInfo.total = this.pages.totalItem;
         this.pageInfo.size = this.pages.pageSize;
         this.initModal()
+        console.log(this.pages)
       }
     },
     getCallError (res) {
@@ -78,8 +83,7 @@ export default {
       }
     },
     initUI () {
-      this.current = 1;
-      this.pageSize = 20;
+      this.pageInfo = defPageInfo;
       this.vdatas = {};
       this.page = {};
       this.fetchUIData();

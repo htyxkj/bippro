@@ -67,7 +67,7 @@ export default {
       mdSelection: true,
     }
   },
-  mixins:[modal]
+  mixins:[modal],
 }
 </script>
 
