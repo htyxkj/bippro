@@ -1,4 +1,4 @@
-var _ = require('lodash');
+// const _ = require('lodash');
 const isArray = _.isArray;
 const bind = _.bind;
 const spread = _.spread;

@@ -1,6 +1,7 @@
 import ReportUI from './report';
 import Common from './common';
 import Bill from './bill';
+import Chart from './charts';
 
 export default function install(Vue) {
   if (install.installed) {
@@ -12,5 +13,6 @@ export default function install(Vue) {
   Vue.use(Common);
   Vue.use(ReportUI);
   Vue.use(Bill);
+  Vue.use(Chart);
 
 }

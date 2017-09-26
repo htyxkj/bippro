@@ -2,14 +2,17 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button>查询</md-button>
-        <md-button>新增</md-button>
+        <md-button @click.native="search">查询</md-button>
+        <md-button @click.native="clear">清空</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button>复制</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button>列表</md-button>
+      </md-part-toolbar-group>
+      <md-part-toolbar-group>
+        <md-button @click.native="searchCount('dialog')">统计</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
          <md-button @click="showSearchInfo">{{showContLabel}}</md-button>
@@ -22,10 +25,10 @@
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">
-        <md-layout md-gutter="4" v-if="showCont">
-          <md-bip-input v-for="(cell, index) in contCel.cels" :key="cell.id" :cell="cell"></md-bip-input>
+        <md-layout md-gutter="4" v-if="showCont&&hasTJ">
+          <md-bip-input v-for="(cell, index) in contCel.cels" :key="cell.id" :cell="cell" :modal="modal" :is-search="true" v-if="cell.isShow"></md-bip-input>
         </md-layout>
-        <md-layout class="flex">
+        <md-layout class="flex" v-if="!groupTJ">
           <md-table-card>
             <md-table class="flex">
               <md-table-header>
@@ -41,6 +44,7 @@
                   :md-selection="mdSelection" 
                   @dblclick.native="dblclick(row)">
                   <md-table-cell v-for="(column, columnIndex) in layoutCel.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
+                    <!-- {{row[column.id]|formartObj(column,row[column.id])}} -->
                     <md-bip-ref :inputValue="row[column.id]|formartObj(column,row[column.id])" :bipRefId="column" :md-numeric="column.type<12"></md-bip-ref>
                   </md-table-cell>
                 </md-table-row>
@@ -61,7 +65,40 @@
             </md-table-tool>
           </md-table-card>
         </md-layout>
+        <md-layout class="flex" v-if="groupTJ">
+           <md-bip-chart ></md-bip-chart>
+        </md-layout>
       </md-content>
+      
+      <md-dialog ref="dialog" class="md-bip-dialog">
+        <md-dialog-title>{{mdTitle}}--统计选择</md-dialog-title>
+        <md-dialog-content>
+          <md-input-container>
+            <label for="groupfilds" >统计项选择</label>
+            <md-select id="groupfilds" multiple v-model="groupfilds">
+              <md-option v-for="(cell, index) in layoutCel.cels"
+                :key="index"
+                :value="cell.id" v-if="cell.type !== 3">
+                {{cell.labelString}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+          <md-input-container>
+            <label for="groupdatafilds">数据项选择</label>
+            <md-select multiple v-model="groupdatafilds" required>
+              <md-option v-for="(cell, index) in layoutCel.cels"
+                :key="index"
+                :value="cell.id" v-if="cell.type == 3">
+                {{cell.labelString}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+        </md-dialog-content>
+        <md-dialog-actions>
+          <md-button class="md-primary" @click="closeDialog('dialog')">取消</md-button>
+          <md-button class="md-primary" @click="okDialog('dialog')">确定</md-button>
+        </md-dialog-actions>
+      </md-dialog>
     </md-part-body>
   </md-part>
 </template>
@@ -81,21 +118,24 @@ export default {
         total:0,
         page:1
       },
-      model:{
-        date:null
-      }
+      modal:{},
+      hasTJ: false,
+      groupfilds: [],
+      groupdatafilds: [],
+      groupTJ: false,
+      tjcell: {},
+      tjpages: {}
     } 
   },
   mixins:[reportformat],
   methods: {
     fetchUIData () {
-      var contCelStr = ''
       var data1 = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAM,
         'pcell': this.mparams.pcell,
-        'pdata': contCelStr,
+        'pdata': JSON.stringify(this.modal),
         'bebill': this.mparams.beBill ? 1 : 2,
         'currentPage': this.pageInfo.page,
         'pageSize': this.pageInfo.size,
@@ -118,6 +158,27 @@ export default {
         this.pageInfo.page = this.pages.currentPage;
         this.pageInfo.total = this.pages.totalItem;
         this.pageInfo.size = this.pages.pageSize;
+        if(this.contCel)
+          this.hasTJ = true;
+      }
+    },
+    search(){
+      this.pageInfo.page = 1;
+      this.fetchUIData();
+    },
+    clear() {
+      this.modal =  {};
+    },
+    searchCount (ref) {
+      this.$refs[ref].open();
+    },
+    closeDialog(ref) {
+      this.$refs[ref].close();
+    },
+    okDialog(ref){
+      if(this.groupdatafilds.length>0&&this.groupfilds.length>0){
+        this.$refs[ref].close();
+        this.groupTJ = true;
       }
     },
     getCallError (res) {
@@ -139,8 +200,6 @@ export default {
       return false;
     },
     initUI () {
-      this.current = 1;
-      this.pageSize = 20;
       this.vdatas = {};
       this.pages = {};
       this.fetchUIData();
@@ -151,6 +210,9 @@ export default {
     'mparams': function (){
       console.log('watch')
       this.initUI()
+    },
+    'modal': function () {
+      this.pageInfo.page = 1;
     }
   },
   mounted () {
@@ -169,6 +231,7 @@ export default {
     // text-align: right;
     color:rgba(81,162,81,.91);
 }
+
 </style>
 
 

@@ -19,7 +19,8 @@ export default {
       modal: {},
       mdAutoSelect: false,
       mdSelection: false,
-      selectData:[]
+      selectData:[],
+      subCellsCount: 0
     }
   },
   methods: {
@@ -57,6 +58,7 @@ export default {
       if (res.data.id === 0) {
         this.layoutCel = res.data.data.layCels;
         this.subLayCells = this.layoutCel.subLayCells[0];
+        this.subCellsCount = this.layoutCel.subLayCells ? this.layoutCel.subLayCells.length : 0;
         this.pages = res.data.data.pages;
         this.pageInfo.page = this.pages.currentPage;
         this.pageInfo.total = this.pages.totalItem;

@@ -34,7 +34,7 @@
                   :md-selection="mdSelection" 
                   @dblclick.native="dblclick(row)">
                   <md-table-cell v-for="(column, columnIndex) in layoutCel.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                    <md-bip-ref :inputValue="row[column.id]|formartObj(column,row[column.id])" :bipRefId="column" :md-numeric="column.type<12"></md-bip-ref>
+                    <md-bip-ref :inputValue="row[column.id]|formartObj(column,row[column.id])" :bipRefId="column" :md-numeric="column.type<12" :modal="row"></md-bip-ref>
                   </md-table-cell>
                 </md-table-row>
               </md-table-body>

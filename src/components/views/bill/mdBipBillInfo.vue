@@ -25,10 +25,12 @@
     </md-part-toolbar>
     <md-part-body>
       <md-content class="flex layout-column">
-        <md-layout md-gutter="2" class="flex md-bip-bill">
+        <md-content class="layout-column">
+        <md-layout md-gutter="2" class="flex">
           <md-bip-input v-for="(cell, index) in layoutCel.cels" :key="cell.id" :cell="cell" :modal="modal" class="bip-input"></md-bip-input>
         </md-layout>
-         <md-layout class="flex">
+        </md-content>
+         <md-layout class="flex layout-column" v-if="subCellsCount>0">
           <md-table-card class="flex">
             <md-table @select="onTableSelect" class="flex">
               <md-table-header>
@@ -57,6 +59,9 @@
           </md-table-card>
          </md-layout>
       </md-content>
+      <!-- <md-content class="flex layout-column">
+        fdsfds
+      </md-content> -->
     </md-part-body>
   </md-part>
 </template>
@@ -70,7 +75,7 @@ export default {
 <style lang="scss" scoped>
 .md-bip-bill{
   // min-height: 0;
-  max-height: 40%;
+  // max-height: 40%;
   // height: 3rem;
   overflow-y: auto;
 }

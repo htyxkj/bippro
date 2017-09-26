@@ -85,6 +85,24 @@ export default {
       return returnobj
     }
 
+    Vue.prototype.getAssist = function (rfid,code,success,error){
+      var data1 = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'apiId': global.APIID_AID,
+        'assistid': rfid,
+        'cont': code
+      };
+      this.getAssistBySync(data1,success,error);
+    }
+    Vue.prototype.getAssistBySync = function (posParams,success,error) {
+      var returnobj = null
+      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+        .then(success)
+        .catch(error)
+      return returnobj;
+    }
+
     Vue.prototype.base64Encode = function (password) {
       var pwd = encodeURIComponent(password)
       pwd = unescape(pwd)

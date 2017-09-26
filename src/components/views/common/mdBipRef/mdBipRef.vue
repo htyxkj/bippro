@@ -1,12 +1,96 @@
 <template>
-<div class="md-bip-ref">{{inputValue}}</div>
+<div class="md-bip-ref">{{refData.name}}</div>
 </template>
 <script>
 export default {
+  data () {
+    return {
+      refData: {
+        code:'',
+        name: ''
+      },
+      showCols:''
+    }
+  },
   props: {'inputValue':null,'bipRefId':Object,mdNumeric: Boolean},
+  updated () {
+  },
   mounted () {
-    if (this.bipRefId && this.bipRefId.refValue) {
-      // console.log(this.bipRefId.refValue)
+    if(this.inputValue)
+      this.initValue();
+  },
+  watch: {
+    'inputValue': function () {
+      this.initValue();
+    }
+  },
+  methods: {
+    initValue(){
+      this.refData.code = this.inputValue;
+      this.refData.name = this.inputValue;
+      if (this.bipRefId && this.bipRefId.refValue) {
+        this.makeRefValue();
+      }
+    },
+    makeRefValue(){
+      var refvalue = JSON.parse(window.sessionStorage.getItem(this.bipRefId.refValue));
+      let isexit = false;
+      if (refvalue){
+        isexit = this.makeRef(refvalue);
+      }
+      if(!isexit){
+        this.getAssist(this.bipRefId.refValue,this.refData.code,this.getSuccCallBack,this.getErrorCallBack);
+      }   
+    },
+    getSuccCallBack(res){
+      // console.log('success返回');
+      if(res.data.code==1){
+        var refvalue = JSON.parse(window.sessionStorage.getItem(this.bipRefId.refValue));
+        // console.log(res.data)
+        this.showCols = res.data.allCols[0]
+        if (refvalue){
+          refvalue.values = this.checkUnqItem(refvalue.values,res.data.values);
+        }else{
+          refvalue = res.data;
+        }
+        this.makeRef(refvalue);
+        refvalue.values = _.uniq(refvalue.values,this.showCols);
+        // console.log(refvalue.values.length+ '===' + this.showCols);
+        window.sessionStorage.setItem(this.bipRefId.refValue,JSON.stringify(refvalue));
+      }else{
+        console.log('没有辅助：'+ this.bipRefId.refValue);
+      }     
+    },
+    checkUnqItem(arr1,arr2){
+      _.forEach(arr2,function(item){
+        // console.log('for循环');
+        // console.log(item);
+        var _index = _.findIndex(arr1,item);
+        // console.log(_index)
+        if(_index<0){
+          arr1.push(item);
+        }
+      });
+      // arr1 = _.union(arr1,arr2);
+      // arr1 = _.uniq(arr1,this.showCols);
+      // console.log(arr1);
+      return arr1;
+    },
+    getErrorCallBack(res) {
+      console.log(res);
+    },
+    makeRef(refvalue){
+      var vls = refvalue.values;
+      if(vls){
+        for (let i = 0; i < vls.length; i++){
+          var item = vls[i];
+          if(item[refvalue.allCols[0]] === this.refData.code) {
+            this.refData.name = item[refvalue.allCols[1]];
+            return true;
+          }
+        }
+      }
+      return false;
     }
   }
 }
