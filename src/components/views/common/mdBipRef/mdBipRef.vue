@@ -1,7 +1,8 @@
 <template>
-<div class="md-bip-ref">{{refData.name}}</div>
+<div class="md-bip-ref">{{refData.name | formartObj(bipRefId,refData.name)}}</div>
 </template>
 <script>
+import common from '../../commonModal.js'
 export default {
   data () {
     return {
@@ -12,9 +13,8 @@ export default {
       showCols:''
     }
   },
+  mixins:[common],
   props: {'inputValue':null,'bipRefId':Object,mdNumeric: Boolean},
-  updated () {
-  },
   mounted () {
     if(this.inputValue)
       this.initValue();
@@ -58,22 +58,16 @@ export default {
         // console.log(refvalue.values.length+ '===' + this.showCols);
         window.sessionStorage.setItem(this.bipRefId.refValue,JSON.stringify(refvalue));
       }else{
-        console.log('没有辅助：'+ this.bipRefId.refValue);
+        // console.log('没有辅助：'+ this.bipRefId.refValue);
       }     
     },
     checkUnqItem(arr1,arr2){
       _.forEach(arr2,function(item){
-        // console.log('for循环');
-        // console.log(item);
         var _index = _.findIndex(arr1,item);
-        // console.log(_index)
         if(_index<0){
           arr1.push(item);
         }
       });
-      // arr1 = _.union(arr1,arr2);
-      // arr1 = _.uniq(arr1,this.showCols);
-      // console.log(arr1);
       return arr1;
     },
     getErrorCallBack(res) {
@@ -86,10 +80,12 @@ export default {
           var item = vls[i];
           if(item[refvalue.allCols[0]] === this.refData.code) {
             this.refData.name = item[refvalue.allCols[1]];
+            this.$emit('makeRef',this.bipRefId.id,this.refData);
             return true;
           }
         }
       }
+      this.$emit('makeRef',this.bipRefId,this.refData);
       return false;
     }
   }

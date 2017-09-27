@@ -9,7 +9,7 @@
         <md-button>复制</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button>列表</md-button>
+        <md-button @click.native="list()">列表</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button @click.native="searchCount('dialog')">统计</md-button>
@@ -44,8 +44,7 @@
                   :md-selection="mdSelection" 
                   @dblclick.native="dblclick(row)">
                   <md-table-cell v-for="(column, columnIndex) in layoutCel.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                    <!-- {{row[column.id]|formartObj(column,row[column.id])}} -->
-                    <md-bip-ref :inputValue="row[column.id]|formartObj(column,row[column.id])" :bipRefId="column" :md-numeric="column.type<12"></md-bip-ref>
+                    <md-bip-ref :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type<12"></md-bip-ref>
                   </md-table-cell>
                 </md-table-row>
               </md-table-body>
@@ -66,7 +65,7 @@
           </md-table-card>
         </md-layout>
         <md-layout class="flex" v-if="groupTJ">
-           <md-bip-chart ></md-bip-chart>
+           <md-bip-chart :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="modal" :pcell="layoutCel.obj_id" :doSearch="doSearCh" :searchCelId="contCel.obj_id"></md-bip-chart>
         </md-layout>
       </md-content>
       
@@ -103,6 +102,7 @@
   </md-part>
 </template>
 <script>
+import common from '../commonModal.js'
 import reportformat from './reportformat.js';
 export default {
   data () {
@@ -123,11 +123,10 @@ export default {
       groupfilds: [],
       groupdatafilds: [],
       groupTJ: false,
-      tjcell: {},
-      tjpages: {}
+      doSearCh: 0
     } 
   },
-  mixins:[reportformat],
+  mixins:[common,reportformat],
   methods: {
     fetchUIData () {
       var data1 = {
@@ -162,12 +161,20 @@ export default {
           this.hasTJ = true;
       }
     },
-    search(){
-      this.pageInfo.page = 1;
-      this.fetchUIData();
+    search() {
+      if(this.groupTJ){
+        this.doSearCh++;
+        this.showCont = false;
+      }else{
+        this.pageInfo.page = 1;
+        this.fetchUIData();
+      }
     },
     clear() {
       this.modal =  {};
+    },
+    list() {
+      this.groupTJ = false;
     },
     searchCount (ref) {
       this.$refs[ref].open();
@@ -179,6 +186,11 @@ export default {
       if(this.groupdatafilds.length>0&&this.groupfilds.length>0){
         this.$refs[ref].close();
         this.groupTJ = true;
+        if(this.doSearCh === Number.MAX_SAFE_INTEGER){
+          this.doSearCh = 0;
+        }else{
+          this.doSearCh++;
+        }
       }
     },
     getCallError (res) {
@@ -205,10 +217,8 @@ export default {
       this.fetchUIData();
     }
   },
-  props: ['mdTitle','mparams'],
   watch: {
     'mparams': function (){
-      console.log('watch')
       this.initUI()
     },
     'modal': function () {
