@@ -65,7 +65,7 @@
           </md-table-card>
         </md-layout>
         <md-layout class="flex" v-if="groupTJ">
-           <md-bip-chart :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="modal" :pcell="layoutCel.obj_id" :doSearch="doSearCh" :searchCelId="contCel.obj_id"></md-bip-chart>
+           <md-bip-chart :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="modal" :pcell="layoutCel.obj_id" :doSearch="doSearCh" :searchCelId="contCel.obj_id" :ptjCell="tjcell" :ptjPage="tjpage" :chartType="ctype" :showChart="showChart"></md-bip-chart>
         </md-layout>
       </md-content>
       
@@ -77,7 +77,7 @@
             <md-select id="groupfilds" multiple v-model="groupfilds">
               <md-option v-for="(cell, index) in layoutCel.cels"
                 :key="index"
-                :value="cell.id" v-if="cell.type !== 3">
+                :value="cell.id" v-if="cell.type !== 3 &&cell.isShow">
                 {{cell.labelString}}
               </md-option>
             </md-select>
@@ -87,10 +87,23 @@
             <md-select multiple v-model="groupdatafilds" required>
               <md-option v-for="(cell, index) in layoutCel.cels"
                 :key="index"
-                :value="cell.id" v-if="cell.type == 3">
+                :value="cell.id" v-if="cell.type == 3&&cell.isShow">
                 {{cell.labelString}}
               </md-option>
             </md-select>
+          </md-input-container>
+          <md-input-container>
+            <label for="ctype">图表类型</label>
+            <md-select v-model="ctype">
+              <md-option v-for="(item, index) in chartList"
+                :key="item.id"
+                :value="item.id">
+                {{item.name}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+          <md-input-container>
+            <md-checkbox id="my-test1" name="my-test1" v-model="showChart">是否显示图表</md-checkbox>
           </md-input-container>
         </md-dialog-content>
         <md-dialog-actions>
@@ -123,7 +136,13 @@ export default {
       groupfilds: [],
       groupdatafilds: [],
       groupTJ: false,
-      doSearCh: 0
+      doSearCh: 0,
+      tjcell:{},
+      tjpage:{},
+      ctype:'',
+      chartList:[{id:'pie',name:'饼图'},{id:'line',name:'线图'},{id:'column',name:'柱状图'}],
+      showChart:true,
+      initSC:true
     } 
   },
   mixins:[common,reportformat],
@@ -134,6 +153,7 @@ export default {
         'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
         'apiId': global.APIID_CELLPARAM,
         'pcell': this.mparams.pcell,
+        'pbuid': this.initSC?this.$route.query.pbuid:'',
         'pdata': JSON.stringify(this.modal),
         'bebill': this.mparams.beBill ? 1 : 2,
         'currentPage': this.pageInfo.page,
@@ -150,13 +170,23 @@ export default {
       this.fetchUIData();
     },
     getCallBack(res){
+      console.log(res)
       if (res.data.id === 0) {
         this.contCel = res.data.data.contCel;
+        this.groupTJ = res.data.data.bcount;
         this.layoutCel = res.data.data.layCels;
-        this.pages = res.data.data.pages;
-        this.pageInfo.page = this.pages.currentPage;
-        this.pageInfo.total = this.pages.totalItem;
-        this.pageInfo.size = this.pages.pageSize;
+        if(this.groupTJ){
+          this.groupfilds = res.data.data.groupfilds;
+          this.groupdatafilds = res.data.data.groupdatafilds;
+          this.tjcell = res.data.data.tjlayCels;
+          this.tjpage = res.data.data.pages;
+          this.ctype = res.data.data.chartType;
+        }else{
+          this.pages = res.data.data.pages;
+          this.pageInfo.page = this.pages.currentPage;
+          this.pageInfo.total = this.pages.totalItem;
+          this.pageInfo.size = this.pages.pageSize;
+        }
         if(this.contCel)
           this.hasTJ = true;
       }
@@ -175,6 +205,9 @@ export default {
     },
     list() {
       this.groupTJ = false;
+      this.initSC = false;
+      if(this.pageInfo.total==0)
+        this.search();
     },
     searchCount (ref) {
       this.$refs[ref].open();

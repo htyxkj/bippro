@@ -36,10 +36,12 @@ export default {
       this.delegateMethod('addSeries', this.formatOption(options));
     },
     removeSeries() {
-      while (this.chart.series.length > 0) {
-        this.chart.series[0].remove(false);
+      if(this.chart&&this.chart.series){
+        while (this.chart.series.length > 0) {
+          this.chart.series[0].remove(false);
+        }
+        this.chart.redraw();
       }
-      this.chart.redraw();
     },
     mergeOption(options) {
       this.init(options);
@@ -66,16 +68,12 @@ export default {
     },
     init(options) {
       options = options || this.options;
-      if (!this.chart && options) {
+      if (options) {
         this.chart = new Highcharts.Chart(this.$el, this.formatOption(options), (c) => {
           this.callback(c);
         });
         if (this.autoResize) {
           this.resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
-          this.resizeHanlder = this._.debounce(() => {
-            this.chart && this.chart.reflow();
-          }, 100, { leading: true });
-
           if (document.addEventListener) {
             window.addEventListener(this.resizeEvt, this.resizeHanlder, false);
           }
@@ -85,11 +83,7 @@ export default {
   },
   watch: {
     options: function(options) {
-      if (!this.chart && options) {
-        this.init();
-      } else {
-        this.chart.update(this.formatOption(this.options));
-      }
+      this.init();
     }
   },
   mounted() {

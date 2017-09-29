@@ -10,7 +10,7 @@
 
     <select :name="name" :id="id" :required="required" :disabled="disabled" tabindex="-1">
       <option selected="true" :value="selectedValue" v-if="!multiple">{{ selectedText }}</option>
-      <option selected="true" v-for="option in multipleOptions" v-if="option.value" :value="option.value">{{ option.text }}</option>
+      <option selected="true" v-for="(option,index) in multipleOptions" v-if="option.value" :value="option.value" :key="index">{{ option.text }}</option>
     </select>
   </div>
 </template>

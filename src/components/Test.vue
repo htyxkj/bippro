@@ -2,7 +2,7 @@
   <md-part>
     <md-part-toolbar>
       <md-part-toolbar-group>
-        <md-button >保存</md-button>
+        <md-button @click.native="bbb">保存</md-button>
         <md-button >放弃</md-button>
         <md-button >新增</md-button>
       </md-part-toolbar-group>
@@ -91,6 +91,12 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  methods:{
+    bbb(){
+      // console.log(this.$bipModal);
+      this.$notify.success({content: '登录成功'})
     }
   }
 }

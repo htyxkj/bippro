@@ -67,12 +67,14 @@ export default {
         window.localStorage.setItem('user', JSON.stringify(userI));
         window.localStorage.setItem('menulist', JSON.stringify(mlist));
         this.$emit('emitLogin');
+         this.$notify.success({content: '成功登陆'})
       } else {
         console.log(res.data.message);
+        this.$notify.danger({content: res.data.message})
       }
     },
     loginError(res) {
-
+      this.$notify.success({content: '系统连接错误！'})
     },
     showOrNot() {
       this.showPwd = !this.showPwd

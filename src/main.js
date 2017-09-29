@@ -8,9 +8,9 @@ Vue.prototype._ = lodash;
 import Components from './components';
 import App from './views/app/myApp';
 
+
 import './sass/app.scss';
 
-// const _ = require('lodash');
 import './js/bip-common-js.js'
 import utils from './js/bip-utils-js'
 import bipDateUtil from './js/bip-date-js'
@@ -19,10 +19,7 @@ Vue.use(bipDateUtil)
 Vue.config.productionTip = false
 Vue.use(Components)
 
-// Vue.use(myAppToolbar)
-// Vue.use(App)
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
