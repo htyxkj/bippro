@@ -103,7 +103,7 @@
             </md-select>
           </md-input-container>
           <md-input-container>
-            <md-checkbox id="my-test1" name="my-test1" v-model="showChart">是否显示图表</md-checkbox>
+            <md-checkbox id="my-test1" name="my-test1" v-model="checkShowC">是否显示图表</md-checkbox>
           </md-input-container>
         </md-dialog-content>
         <md-dialog-actions>
@@ -142,6 +142,7 @@ export default {
       ctype:'',
       chartList:[{id:'pie',name:'饼图'},{id:'line',name:'线图'},{id:'column',name:'柱状图'}],
       showChart:true,
+      checkShowC:1,
       initSC:true
     } 
   },
@@ -256,6 +257,14 @@ export default {
     },
     'modal': function () {
       this.pageInfo.page = 1;
+    },
+    'checkShowC':function () {
+      console.log(this.checkShowC)
+      if(this.checkShowC==1){
+        this.showChart = true;
+      }else{
+        this.showChart = false;
+      }
     }
   },
   mounted () {
