@@ -60,6 +60,7 @@
 </template>
 <script>
 import modal from './modal.js'
+import billList from './billList.js' 
 export default {
   data () {
     return {
@@ -67,7 +68,7 @@ export default {
       mdSelection: true,
     }
   },
-  mixins:[modal],
+  mixins:[modal,billList],
 }
 </script>
 

@@ -26,6 +26,21 @@ export default {
       return returnobj
     }
 
+    Vue.prototype.getAssistDataByAPI = function (mdRefID,success,error) {
+      var  posParams = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'apiId': global.APIID_AID,
+        'assistid': mdRefID,
+        'cont':''
+      }
+      var returnobj = null
+      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+        .then(success)
+        .catch(error)
+      return returnobj;
+    }
+
     Vue.prototype.getUserInfo = function () {
       return JSON.parse(window.localStorage.getItem('user'))
     }

@@ -32,7 +32,7 @@
         </md-content>
          <md-layout class="flex layout-column" v-if="subCellsCount>0">
           <md-table-card class="flex">
-            <md-table @select="onTableSelect" class="flex">
+            <md-table  class="flex">
               <md-table-header>
                 <md-table-row>
                   <md-table-head v-for="(item,itemIndex) in subLayCells.cels" :key="item.id" v-if="item.isShow" :md-numeric="item.type===3">{{item.labelString}}</md-table-head>
@@ -53,22 +53,20 @@
                   md-label="Rows"
                   md-separator="of"
                   :md-page-options="[5, 10, 25, 50]"
-                  @pagination="onTablePagination">
+                  >
               </md-table-pagination>
             </md-table-tool>
           </md-table-card>
          </md-layout>
       </md-content>
-      <!-- <md-content class="flex layout-column">
-        fdsfds
-      </md-content> -->
     </md-part-body>
   </md-part>
 </template>
 <script>
-import modal from './modal.js'
+import modal from './modal.js';
+import billInfo from './billInfo.js';
 export default {
-  mixins:[modal]
+  mixins:[modal,billInfo]
 }
 </script>
 

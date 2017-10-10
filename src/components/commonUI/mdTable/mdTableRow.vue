@@ -41,7 +41,8 @@ export default {
   },
   watch: {
     mdItem(newValue, oldValue) {
-      this.parentTable.data[this.index] = this.mdItem;
+      let _index = this.index - 1;
+      this.parentTable.data[_index] = this.mdItem;
       this.handleMultipleSelection(newValue === oldValue);
     }
   },

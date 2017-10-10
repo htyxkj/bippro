@@ -114,7 +114,7 @@ export default {
     makeDataUI() {
       this.pageInfo.total = this.tjpages.totalItem;
       this.pageInfo.size = this.tjpages.pageSize;
-      this.chartData.splice();
+      this.chartData = [];
       if (this.pageInfo.total > 50) {
         console.log('数据太多了，页面无法显示，只能显示50行')
         this.chartData = _.take(this.tjpages.celData, 50);

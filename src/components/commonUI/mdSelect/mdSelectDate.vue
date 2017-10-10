@@ -1,33 +1,35 @@
-<style scoped>
+<style lang="scss" scoped>
+$dateWidth:300px;
+$dateFW:300;
 .cov-date-body {
   background: #009688;
   overflow: hidden;
   font-size: 16px;
-  font-family: 'Roboto';
-  font-weight: 400;
+  font-family: 'san';
+  font-weight: $dateFW;
   display: block;
-  width: 400px;
+  width: $dateWidth;
   max-width: 100%;
 }
 .cov-picker-box {
   background: #fff;
   width: 100%;
   display: inline-block;
-  padding: 25px;
+  padding: 20px;
   box-sizing: border-box !important;
   -moz-box-sizing: border-box !important;
   -webkit-box-sizing: border-box !important;
   -ms-box-sizing: border-box !important;
-  width: 400px;
+  width: $dateWidth;
   max-width: 100%;
-  height: 280px;
+  height: 250px;
   text-align: start!important;
 }
 .cov-picker-box td {
-  height: 34px;
-  width: 34px;
+  height: 32px;
+  width: 32px;
   padding: 0;
-  line-height: 34px;
+  line-height: 32px;
   color: #000;
   background: #fff;
   text-align: center;
@@ -42,9 +44,9 @@
   display: inline-block;
   text-align: center;
   cursor: pointer;
-  height: 34px;
+  height: 30px;
   padding: 0;
-  line-height: 34px;
+  line-height: 30px;
   color: #000;
   background: #fff;
   vertical-align: middle;

@@ -47,6 +47,7 @@ export default {
   },
   watch: {
     value(value) {
+      console.log(value);
       value=this.formattedValue(value);
       this.setParentValue(value);
       this.updateValues(value);
@@ -55,10 +56,13 @@ export default {
   },
   methods: {
     formattedValue(value){
-      value= moment(value||this.value).format(this.option.format);
+      value= moment(value).format(this.option.format);
       return value=='Invalid date'?'':value;
     },
     updateValue: function (value) {
+      if (value == undefined) {
+        value = '';
+      }
       var formattedValue =this.formattedValue(value);
       if (formattedValue !== value||this.$refs.input.value !=formattedValue) {
         this.$refs.input.value = formattedValue;
@@ -66,6 +70,19 @@ export default {
       this.setParentValue(formattedValue);
       this.$emit('input',formattedValue);
       this.$emit('change',formattedValue);
+    },
+    onFocus() {
+      if (this.parentContainer) {
+        this.parentContainer.isFocused = true;
+        if (!this.$refs.input.value)
+          this.updateValue(this.value);
+      }
+    },
+    onBlur() {
+      if(this.parentContainer){
+        this.parentContainer.isFocused = false;
+      }
+      this.setParentValue();
     },
   },
   mounted() {
@@ -79,7 +96,7 @@ export default {
       this.setParentDisabled();
       this.setParentRequired();
       this.updateValues();
-      this.updateValue();
+      this.updateValue(this.value);
     });
   },
 }

@@ -9,9 +9,9 @@ export default {
     return {
       pager: {
         firstId:'1',
-        lastId:'5',
-        prevId:'',
-        nextId:'2',
+        lastId:'1',
+        prevId:'0',
+        nextId:'1',
       },
       pageInfo: {
         size:20,
@@ -20,7 +20,7 @@ export default {
       },
       pages: {},
       layoutCel: {},
-      subLayCells: {},
+      subLayCells: [],
       modal: {},
       mdAutoSelect: false,
       mdSelection: false,
@@ -29,13 +29,16 @@ export default {
     }
   },
   methods: {
-    create() {
-      this.$emit('create');
-    },
     list() {
       this.$emit('list');
     },
     paging (id) {
+    },
+    initUI () {
+      this.pageInfo = defPageInfo;
+      this.vdatas = {};
+      this.page = {};
+      this.fetchUIData();
     },
     fetchUIData () {
       var data1 = {
@@ -53,50 +56,8 @@ export default {
         this.getDataByAPINew(data1,this.getCallBack,this.getCallError)
       }
     },
-    onTablePagination (pager) {
-      this.pageInfo.page = pager.page;
-      this.pageInfo.size = pager.size;
-      this.fetchUIData();
-    },
-    getCallBack(res){
-      if (res.data.id >= 0) {
-        this.layoutCel = res.data.data.layCels;
-        this.subCellsCount = this.layoutCel.subLayCells ? this.layoutCel.subLayCells.length : 0;
-        this.subLayCells =  this.subCellsCount >0 ? this.layoutCel.subLayCells[0]: null;
-        this.pages = res.data.data.pages;
-        this.pageInfo.page = this.pages.currentPage;
-        this.pageInfo.total = this.pages.totalItem;
-        this.pageInfo.size = this.pages.pageSize;
-        this.initModal()
-        console.log(this.pages)
-      }
-    },
-    getCallError (res) {
 
-    },
-    dblclick (row) {
-    },
-    initModal () {
-      for(let i = 0; i <  this.layoutCel.cels.length;i++) {
-        var item = this.layoutCel.cels[i];
-        this.modal[item.id] = item.initValue;
-      }
-    },
-    initUI () {
-      this.pageInfo = defPageInfo;
-      this.vdatas = {};
-      this.page = {};
-      this.fetchUIData();
-    },
-    onTableSelect(item){
-      this.selectData = item;
-    },
-    setRowColor(_index){
-      _index = _index % 2;
-      if ( _index !== 0){
-        return true;
-      }
-      return false;
+    getCallError (res) {
     },
     numRed (vals,cell) {
       if(cell.type === 3 &&vals<0)
@@ -105,20 +66,6 @@ export default {
     },
   },
   props: ['mdTitle','mparams'],
-  mounted () {
-    if(this.mparams){
-      this.initUI()
-      console.log('bill-mounted')
-    }
-  },
-  watch: {
-    'mparams': function () {
-      if(this.mparams){
-        this.initUI()
-        console.log('bill-change')
-      }
-    }
-  },
   filters: {
     formartObj: function(values,cell){
       if (cell.type === 3) {
@@ -131,6 +78,20 @@ export default {
         } 
       }
       return values;
+    }
+  },
+  mounted () {
+    if(this.mparams){
+      this.initUI()
+      console.log('bill-mounted')
+    }
+  },
+  watch: {
+    'mparams': function () {
+      if(this.mparams){
+        this.initUI()
+        console.log('bill-change')
+      }
     }
   },
 };

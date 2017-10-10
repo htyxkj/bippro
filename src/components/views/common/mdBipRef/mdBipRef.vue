@@ -1,5 +1,5 @@
 <template>
-<div class="md-bip-ref">{{refData.name | formartObj(bipRefId,refData.name)}}</div>
+  <div class="md-bip-ref">{{refData.name | formartObj(bipRefId,refData.name)}}</div>
 </template>
 <script>
 import common from '../../commonModal.js'
