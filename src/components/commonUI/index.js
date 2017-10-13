@@ -42,6 +42,7 @@ import mdPart from './mdPart';
 import mdView from './mdView';
 import mdTree from './mdTree';
 import mdChart from './mdChart';
+import mdGrid from './mdGrid';
 
 const options = {
     MdAvatar,
@@ -88,6 +89,7 @@ const options = {
     mdView,
     mdTree,
     mdChart,
+    mdGrid,
 };
 
 export default function install(Vue) {

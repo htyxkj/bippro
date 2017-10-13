@@ -1,7 +1,7 @@
 <template>
   <md-dialog ref="dialog"  @close="onRefClose" class="md-refs-dialog">
       <md-toolbar>
-        <h1 class="md-title">{{title}}选择</h1>
+        <h1 class="md-title">{{title}}</h1>
         <md-input-container class="md-flex md-header-search">
           <md-input class="md-header-search-input"  placeholder="search" @keyup.enter.native="doQuery(word)" v-model="word"></md-input>
           <md-button class="md-icon-button md-inset" @click="doQuery(word)">
@@ -13,17 +13,11 @@
         </md-button>
       </md-toolbar>
       <md-dialog-content class="no-padding">
-        <md-table ref="table" @select="selectedRow" :multiple="false" :md-selection="mdSelection">
+        <md-table ref="table" @select="selectedRow" :multiple="multiple" :md-selection="mdSelection">
           <md-table-header>
             <md-table-row>
-              <md-table-cell>
-                ID
-              </md-table-cell>
-              <md-table-cell>
-                name
-              </md-table-cell>
-              <md-table-cell>
-                price
+              <md-table-cell v-for="(name,index) in header" :key="index">
+                {{name}}
               </md-table-cell>
             </md-table-row>
           </md-table-header>
@@ -32,8 +26,8 @@
               :key="rowIndex" 
               :md-item="row"
               :md-selection="mdSelection" md-auto-select>
-              <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex">
-                {{column}}
+              <md-table-cell v-for="(column, columnIndex) in showCols" :key="columnIndex">
+                {{row[allCols[column]]}}
               </md-table-cell>
             </md-table-row>
           </md-table-body>
@@ -44,7 +38,8 @@
           :md-size="pageInfo.size"
           :md-total="pageInfo.total"
           :md-page="pageInfo.page"
-          :md-page-options="[10 ,20]"
+          :md-page-options="[10,20,30,40,50,100]"
+           @pagination="onTablePagination"
          >
         </md-table-pagination>
         <span class="flex"></span>
@@ -55,9 +50,6 @@
 </template>
 
 <script>
-
-import axios from 'axios'
-
 export default {
   props: {
     value: {
@@ -65,7 +57,7 @@ export default {
     },
     multiple: {
       type: Boolean,
-      default: true
+      default: false
     },
     mdMax: {
       type: Number,
@@ -89,7 +81,10 @@ export default {
       type:Boolean,
       default:false
     },
-    title:String
+    disabled:{
+      type:Boolean,
+      default:false
+    }
   },
   data(){
     return{
@@ -101,53 +96,99 @@ export default {
           page:1
       },
       selectedRows:[],
-      parentTable:''
+      parentTable:'',
+      header: [],
+      showCols:[],
+      allCols:[],
+      title:''
     } 
+  },
+  mounted(){
+    // this.doQuery();
   },
   methods:{
     open(){
       this.$refs['dialog'].open()
+      console.log('open')
       this.doQuery('')
     },
-    
     onRefClose(){
-
     },
     selectedRow(items){
-      this.selectedRows.splice();
-      for(var x in items){
-        this.selectedRows[0] = items[x]
+      if (this.multiple){
+        this.selectedRows = items;
+      }else{
+        this.selectedRows.splice();
+        for(var x in items){
+          this.selectedRows[0] = items[x]
+        }
       }
     },
-
     doQuery(word){
+      var option={
+        'pageSize': this.pageInfo.size,
+        'page':this.pageInfo.page,
+        'assistid': this.mdRefId,
+        'cont': word
+      };
       console.log(this.mdRefId);
       if (this.mdRefId) {
-        this.getAssistDataByAPI(this.mdRefId,this.getCallBack,this.getCallError);
+        this.getAssistODataByAPI(option,this.getCallBack,this.getCallError);
       }
-      axios.get('http://jspang.com/DemoApi/oftenGoods.php')
-      // axios.get('http://192.168.0.116:8888/bip')
-      .then(response=>{
-        this.refData = response.data.filter(o=>JSON.stringify(o).indexOf(word)>=0)
-      })
     },
     getCallBack(res){
-
+      var data = res.data;
+      this.title = data.title;
+      this.header = data.labers;
+      this.showCols = data.showCols;
+      this.allCols = data.allCols;
+      if(data.code==1){
+        this.refData = data.values;
+        this.pageInfo.total = data.total;
+        this.pageInfo.size = data.size;
+      }else if (data.code==0){
+        this.$notify.warning({content: data.message});
+      }else{
+        this.$notify.danger({content: data.message});
+      }
     },
     getCallError(res){
-
+      console.log(res);
+      this.$notify.danger({content: res.data.message});
     },
     cancel(){
       this.$refs['dialog'].close();
       this.$emit('close',false);
     },
     close(){
-      if(this.selectedRows){
-        this.$emit('close',this.selectedRows);
+      if(this.selectedRows.length>0){
+        var refBackData = {
+          cols:[],
+          value:[],
+          multiple:false
+        };
+        refBackData.cols = this.allCols;
+        if(!this.multiple){
+          refBackData.value = this.selectedRows[0];
+        }else{
+          refBackData.multiple = true;
+          refBackData.value = this.selectedRows;
+        }
+        this.$emit('close',refBackData);
 
       }
       this.$refs['dialog'].close();
     },
+    makeRefData () {
+      if(this.selectedRows){
+      }
+    },
+    onTablePagination(page){
+      console.log(page);
+      this.pageInfo.page = page.page;
+      this.pageInfo.size = page.size;
+      this.doQuery();
+    }
   },
   watch:{
     word(val){

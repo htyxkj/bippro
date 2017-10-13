@@ -32,8 +32,40 @@ export default {
         'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
         'apiId': global.APIID_AID,
         'assistid': mdRefID,
-        'cont':''
+        'cont':'',
       }
+      var returnobj = null
+      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+        .then(success)
+        .catch(error)
+      return returnobj;
+    }
+    Vue.prototype.getAssistDataByAPICout = function (mdRefID,cont,success,error) {
+      var  posParams = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'apiId': global.APIID_AID,
+        'assistid': mdRefID,
+        'cont':cont
+      }
+      var returnobj = null
+      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+        .then(success)
+        .catch(error)
+      return returnobj;
+    }
+
+    Vue.prototype.getAssistODataByAPI = function (params,success,error) {
+      var  posParams = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'apiId': global.APIID_AIDO,
+        'assistid': '',
+        'cont':'',
+        'pageSize': 20,
+        'page':1,
+      }
+      posParams = Object.assign(posParams, params)
       var returnobj = null
       axios.post(global.BIPAPIURL, qs.stringify(posParams))
         .then(success)

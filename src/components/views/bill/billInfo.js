@@ -19,6 +19,10 @@ export default {
       for(let i = 0; i <  this.layoutCel.cels.length;i++) {
         var item = this.layoutCel.cels[i];
         // console.log(item.initValue)
+        if(item.id == 'sid'){
+          console.log(item);
+          console.log(this.layoutCel);
+        }
         let iniVl = item.initValue;
         if (iniVl == '[!]') {
           iniVl = deptInfo.deptCode;
@@ -47,7 +51,11 @@ export default {
         if(iniVl == '[Y-M]'){
           iniVl = common.now('YYYY-MM');
         }
-        this.modal[item.id] = iniVl;
+        if(item.type==5){
+          iniVl = parseInt(iniVl);
+        }
+        // this.modal[item.id] = iniVl;
+        this.$set(this.modal,item.id,iniVl);
       } 
     },
   }

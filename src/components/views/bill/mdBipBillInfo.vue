@@ -27,7 +27,7 @@
       <md-content class="flex layout-column">
         <md-content class="layout-column">
         <md-layout md-gutter="2" class="flex">
-          <md-bip-input v-for="(cell, index) in layoutCel.cels" :key="cell.id" :cell="cell" :modal="modal" class="bip-input"></md-bip-input>
+          <md-bip-input v-for="(cell, index) in layoutCel.cels" :ref="cell.id" :key="cell.id" :cell="cell" :modal="modal" class="bip-input" @change="dataChange"></md-bip-input>
         </md-layout>
         </md-content>
          <md-layout class="flex layout-column" v-if="subCellsCount>0">
@@ -63,10 +63,41 @@
   </md-part>
 </template>
 <script>
-import modal from './modal.js';
+import modalcm from './modal.js';
 import billInfo from './billInfo.js';
 export default {
-  mixins:[modal,billInfo]
+  mixins:[modalcm,billInfo],
+  // created(){
+  //   console.log('created')
+  //   console.log(this.modal);
+  // },
+  methods: {
+    dataChange (data) {
+      // console.log(this)
+      if(!data.multiple){
+        this.modal[data.cellId.id] = data.value[data.cols[0]];
+        var cellScript = data.cellId.script;
+        if(cellScript){
+          var cc = cellScript.split('&');
+          var flds = cc[0].split(',');
+          var _index = cc[1].split(',');
+          for(let i = 0; i<flds.length;i++){
+            var index = parseInt(_index[i]);
+            var fld = flds[i];
+            this.$set(this.modal,fld,data.value[data.cols[index]]);
+            // this.modal[flds[i]] = data.value[data.cols[index]];
+            var bb = this.$refs[fld];
+            // console.log('bb')
+            console.log(bb);
+            // console.log('bb.ref')
+            var cc = bb[0].$refs[fld];
+            console.log(cc)
+            cc.parentChange();
+          }
+        }
+      }
+    }
+  }
 }
 </script>
 

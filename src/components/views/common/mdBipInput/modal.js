@@ -33,13 +33,11 @@ export default {
     if(this.cell) {
       let notedit = this.cell.attr&this.NOTEDIT;
       this.disabled = notedit > 0 ? true:false;
-      // console.log(this.cell.id+":"+notedit)
     }  
   },
   methods: {
-  },
-  watch: {
-  },
-  computed: {
-  }
+    parentChange(){
+      // console.log('111');
+    }
+  }    
 }

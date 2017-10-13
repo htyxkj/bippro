@@ -1,6 +1,6 @@
 <template>
   <div class="container cbody">
-    <div class="panel panel-default login-box opa bgcolor">
+    <div class="panel panel-default login-box opa bgcolor" @keyup.enter="loginRemote">
       <div class="panel-heading bgcolor">
         <h2 class="panel-title">BIP管理应用平台登录</h2>
       </div>

@@ -8,12 +8,19 @@
 
     <span class="md-table-pagination-info">{{pageInfo}}</span>
 
+    <md-button class="md-icon-button md-table-pagination-first" @click.native="firstPage" :disabled="currentPage === 1">
+      <md-icon>first_page</md-icon>
+    </md-button>
     <md-button class="md-icon-button md-table-pagination-previous" @click.native="previousPage" :disabled="currentPage === 1">
       <md-icon>keyboard_arrow_left</md-icon>
     </md-button>
 
     <md-button class="md-icon-button md-table-pagination-next" @click.native="nextPage" :disabled="shouldDisable">
       <md-icon>keyboard_arrow_right</md-icon>
+    </md-button>
+
+    <md-button class="md-icon-button md-table-pagination-last" @click.native="lastsPage" :disabled="shouldDisable">
+      <md-icon>last_page</md-icon>
     </md-button>
   </div>
 </template>
@@ -57,7 +64,6 @@
       },
       'mdSize': function(val) {
         this.currentSize = parseInt(val, 10);
-        console.log('tablepage==' + val + '' + this.currentSize)
       },
       'mdPage': function (val) {
         this.currentPage = parseInt(val, 10);
@@ -94,6 +100,13 @@
           this.emitPaginationEvent();
         }
       },
+      firstPage(){
+        if (this.canFireEvents) {
+          this.currentPage = 1;
+          this.$emit('page', this.currentPage);
+          this.emitPaginationEvent();
+        }
+      },
       previousPage() {
         if (this.canFireEvents) {
           this.currentPage--;
@@ -107,7 +120,18 @@
           this.$emit('page', this.currentPage);
           this.emitPaginationEvent();
         }
-      }
+      },
+      lastsPage(){
+        if (this.canFireEvents) {
+          var bb = this.totalItems%this.currentSize;
+          bb = (bb>0?1:0);
+          this.currentPage = (this.totalItems/this.currentSize)+bb;
+          // this.currentPage = 1;
+          console.log(this.currentPage)
+          this.$emit('page', this.currentPage);
+          this.emitPaginationEvent();
+        }
+      },
     },
     mounted() {
       this.mdPageOptions = this.mdPageOptions || [5,10, 25, 50];

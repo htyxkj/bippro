@@ -65,7 +65,7 @@
       },
       onFileSelected($event) {
         const files = $event.target.files || $event.dataTransfer.files;
-
+        console.log(files)
         if (files) {
           if (files.length > 1) {
             this.filename = this.getMultipleName(files);

@@ -9,7 +9,7 @@
        :disabled="disabled" 
        :required="required" 
        v-on:input="updateValue($event.target.value)" />
-    <md-select-date :value="value" @change="updateValue" :option="option"></md-select-date>
+    <md-select-date :value="value" @change="updateValue" :option="option" :disabled="disabled" ></md-select-date>
   </div>
 </template>
 <script>
@@ -40,15 +40,17 @@ export default {
             cancel: '取消'
           },
           overlayOpacity: 0.5,
-          dismissible: true
+          dismissible: true,
         }
       }
-    }
+    },
+    disabled:false,
+    btime:false
   },
   watch: {
     value(value) {
       console.log(value);
-      value=this.formattedValue(value);
+      value=this.formattedValue(value||moment.now());
       this.setParentValue(value);
       this.updateValues(value);
       this.updateValue(value);
@@ -56,12 +58,18 @@ export default {
   },
   methods: {
     formattedValue(value){
+      if(this.btime){
+        this.option.format  = 'YYYY-MM-DD HH:mm'
+      }
       value= moment(value).format(this.option.format);
       return value=='Invalid date'?'':value;
     },
     updateValue: function (value) {
       if (value == undefined) {
         value = '';
+      }
+      if(this.disabled){
+        return ;
       }
       var formattedValue =this.formattedValue(value);
       if (formattedValue !== value||this.$refs.input.value !=formattedValue) {

@@ -83,14 +83,12 @@ export default {
   mounted () {
     if(this.mparams){
       this.initUI()
-      console.log('bill-mounted')
     }
   },
   watch: {
     'mparams': function () {
       if(this.mparams){
         this.initUI()
-        console.log('bill-change')
       }
     }
   },

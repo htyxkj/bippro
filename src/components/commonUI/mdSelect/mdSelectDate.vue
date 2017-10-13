@@ -244,7 +244,7 @@ $dateFW:300;
     <md-menu class="md-select-date" ref="menu" @open="onOpen" @close="onClose">
       <div md-menu-trigger>
         <slot>
-          <md-button class="md-icon-button"><md-icon>date_range</md-icon></md-button>
+          <md-button class="md-icon-button" :disabled="disabled"><md-icon>date_range</md-icon></md-button>
         </slot>
       </div>
       <md-menu-content>
@@ -261,20 +261,20 @@ $dateFW:300;
             <div class="cov-picker-box">
               <div class="week">
                 <ul>
-                  <li v-for="weekie in library.week">{{weekie}}</li>
+                  <li v-for="(weekie,index) in library.week" :key="index">{{weekie}}</li>
                 </ul>
               </div>
-              <div class="day" v-for="day,index in dayList" :key="index" @click="checkDay(day)" :class="{'checked':day.checked,'unavailable':day.unavailable,'passive-day': !(day.inMonth)}" :style="day.checked ? (option.color && option.color.checkedDay ? { background: option.color.checkedDay } : { background: '#F50057' }) : {}">{{day.value}}</div>
+              <div class="day" v-for="(day,index) in dayList" :key="index" @click="checkDay(day)" :class="{'checked':day.checked,'unavailable':day.unavailable,'passive-day': !(day.inMonth)}" :style="day.checked ? (option.color && option.color.checkedDay ? { background: option.color.checkedDay } : { background: '#F50057' }) : {}">{{day.value}}</div>
             </div>
           </div>
           <div class="cov-date-box list-box" v-if="showInfo.year">
             <div class="cov-picker-box date-list" id="yearList">
-              <div class="date-item" v-for="yearItem,index in library.year" :class="{'md-active':yearItem===checked.year}" :key="index" @click="setYear(yearItem)">{{yearItem}}</div>
+              <div class="date-item" v-for="(yearItem,index) in library.year" :class="{'md-active':yearItem===checked.year}" :key="index" @click="setYear(yearItem)">{{yearItem}}</div>
             </div>
           </div>
           <div class="cov-date-box list-box" v-if="showInfo.month">
             <div class="cov-picker-box date-list">
-              <div class="date-item" v-for="monthItem,index in library.month" :class="{'md-active':(index+1)===parseInt(checked.month)}" :key="index" @click="setMonth(monthItem)">{{monthItem}}</div>
+              <div class="date-item" v-for="(monthItem,index) in library.month" :class="{'md-active':(index+1)===parseInt(checked.month)}" :key="index" @click="setMonth(monthItem)">{{monthItem}}</div>
             </div>
           </div>
           <div class="cov-date-box list-box" v-if="showInfo.hour">
@@ -283,12 +283,12 @@ $dateFW:300;
                 <div class="hour-box">
                   <div class="mui-pciker-rule mui-pciker-rule-ft"></div>
                   <ul>
-                    <li class="hour-item" v-for="hitem in hours" @click="setTime('hour', hitem, hours)" :class="{'active':hitem.checked}">{{hitem.value}}</li>
+                    <li class="hour-item" v-for="(hitem,index) in hours" :key="index" @click="setTime('hour', hitem, hours)" :class="{'active':hitem.checked}">{{hitem.value}}</li>
                   </ul>
                 </div>
                 <div class="min-box">
                   <div class="mui-pciker-rule mui-pciker-rule-ft"></div>
-                  <div class="min-item" v-for="mitem in mins" @click="setTime('min',mitem, mins)" :class="{'active':mitem.checked}">{{mitem.value}}</div>
+                  <div class="min-item" v-for="(mitem,index) in mins" :key="index" @click="setTime('min',mitem, mins)" :class="{'active':mitem.checked}">{{mitem.value}}</div>
                 </div>
               </div>
             </div>
@@ -331,8 +331,9 @@ export default {
           overlayOpacity: 0.5,
           dismissible: true
         }
-      }
+      },
     },
+    disabled:false,
     limit: {
       type: Array,
       default () {

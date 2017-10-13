@@ -5,14 +5,14 @@
   </md-part>
 </template>
 <script>
-import modal from './modal.js'
+import modalCC from './modal.js'
 export default {
   data () {
     return {
       blist: true
     }
   },
-  mixins:[modal],
+  mixins:[modalCC],
   methods:{
     create () {
       this.blist = false;

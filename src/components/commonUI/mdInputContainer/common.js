@@ -81,12 +81,16 @@ export default {
       if (this.parentContainer) {
         this.parentContainer.isFocused = true;
       }
+      var elValue=this.getElementValue();
+      this.$emit('focus');
     },
     onBlur() {
       if(this.parentContainer){
         this.parentContainer.isFocused = false;
       }
       this.setParentValue();
+      var elValue=this.getElementValue();
+      this.$emit('blur');
     },
     debounceUpdate() {
       if(!this.fetch||typeof this.fetch!=='function'){

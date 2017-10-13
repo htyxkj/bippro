@@ -8,5 +8,10 @@
 import comm from './modal.js';
 export default {
   mixins:[comm],
+  watch:{
+    'modal': function(){
+      console.log('modal change')
+    }
+  }
 }
 </script>
