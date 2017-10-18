@@ -39,7 +39,7 @@
           </md-menu>
           <md-card-actions>
             <div class="layout-row layout-fill layout-align-space-between-center">
-              <md-button>添加账号</md-button>
+              <md-button>下载客户端</md-button>
               <md-button @click="logOut">退出</md-button>
             </div>
           </md-card-actions>

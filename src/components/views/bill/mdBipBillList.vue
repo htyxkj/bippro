@@ -5,7 +5,7 @@
         <md-button @click.native="create">新建</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button>删除</md-button>
+        <md-button @click.native="delList">删除</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
       </md-part-toolbar-group>
@@ -34,7 +34,7 @@
                   :md-selection="mdSelection" 
                   @dblclick.native="dblclick(row)">
                   <md-table-cell v-for="(column, columnIndex) in layoutCel.cels" :key="columnIndex" v-if="column.isShow" :md-numeric="column.type<12" :class="numRed(row[column.id],column) ? 'md-num-red':''">
-                    <md-bip-ref :inputValue="row[column.id]|formartObj(column,row[column.id])" :bipRefId="column" :md-numeric="column.type<12" :modal="row"></md-bip-ref>
+                    <md-bip-ref :inputValue="row[column.id]" :bipRefId="column" :md-numeric="column.type === 3" :modal="row"></md-bip-ref>
                   </md-table-cell>
                 </md-table-row>
               </md-table-body>
@@ -69,6 +69,28 @@ export default {
     }
   },
   mixins:[modal,billList],
+  methods:{
+    delList(){
+      console.log(this.selectData);
+      var _self = this;
+      _.forEach(this.selectData,function(n,key){
+        var str = JSON.stringify(n);
+        //  console.log(str);
+        var options = {'pcell': _self.mparams.pcell, 'jsonstr': str,'state':4};
+        _self.saveData(options,_self.delSuccess,_self.delError);
+      });
+      this.$notify.success({content: '删除成功！'});
+    },
+    delSuccess(res){
+      if(res.data.id == 0){
+        // this.$notify.info({content: '删除成功！'});
+        this.fetchUIData();
+      }
+    },
+    delError(res){
+      this.$notify.danger({content: '出错了！'});
+    }
+  }
 }
 </script>
 

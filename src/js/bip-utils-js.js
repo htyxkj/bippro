@@ -73,6 +73,24 @@ export default {
       return returnobj;
     }
 
+    Vue.prototype.saveData = function (params,success,error) {
+      var  posParams = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'apiId': global.APIID_SAVEDATA,
+        'pcell': '',
+        'jsonstr':'',
+        'datatype':1,
+        'state': 3
+      }
+      posParams = Object.assign(posParams, params)
+      var returnobj = null
+      axios.post(global.BIPAPIURL, qs.stringify(posParams))
+        .then(success)
+        .catch(error)
+      return returnobj;
+    }
+
     Vue.prototype.getUserInfo = function () {
       return JSON.parse(window.localStorage.getItem('user'))
     }

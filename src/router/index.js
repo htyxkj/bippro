@@ -2,16 +2,22 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Test from '@/components/Test'
 import CommLayUI from '@/views/common/commonLayUI'
+import Dashbord from '@/views/dashboard/Dashboard'
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Test
+      name: 'Index',
+      component: Dashbord
+    },
+    {
+      path: '/index',
+      name: 'Dashbord',
+      component: Dashbord
     },
     {
       path: '/layoutui',

@@ -32,11 +32,14 @@ export default {
       this.setTitle();
     },
     setTitle() {
-  
-      if(this.$route.query.title){
+        if(this.$route.query.title){
         this.mdTitle = this.$route.query.title
       }else{
-        this.mdTitle = this.$route.path;
+        if(this.$route.path == '/' || this.$route.path == '/index'){
+          this.mdTitle = '首页';
+        }else{
+          this.mdTitle = this.$route.path;
+        }
       }
     },
     emitLogin(){
@@ -47,7 +50,7 @@ export default {
       this.isLogin = false;
       window.sessionStorage.setItem('isLogin', JSON.stringify(this.isLogin))
       this.$router.push({path:'/',name:''})
-      console.log(this.$route)
+      // console.log(this.$route)
     }
   },
   mounted(){

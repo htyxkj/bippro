@@ -125,7 +125,7 @@
         if (this.canFireEvents) {
           var bb = this.totalItems%this.currentSize;
           bb = (bb>0?1:0);
-          this.currentPage = (this.totalItems/this.currentSize)+bb;
+          this.currentPage = parseInt(this.totalItems/this.currentSize)+bb;
           // this.currentPage = 1;
           console.log(this.currentPage)
           this.$emit('page', this.currentPage);

@@ -65,7 +65,7 @@ export default {
       return false;
     },
   },
-  props: ['mdTitle','mparams'],
+  props: {mdTitle:{type:String,default:''},mparams:Object},
   filters: {
     formartObj: function(values,cell){
       if (cell.type === 3) {
@@ -78,18 +78,6 @@ export default {
         } 
       }
       return values;
-    }
-  },
-  mounted () {
-    if(this.mparams){
-      this.initUI()
-    }
-  },
-  watch: {
-    'mparams': function () {
-      if(this.mparams){
-        this.initUI()
-      }
     }
   },
 };

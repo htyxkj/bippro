@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-list-item v-if="menuItem.haveChild == false" class="md-dense">
+    <md-list-item v-if="menuItem.haveChild == false" class="md-dense md-list-item-expand">
       <router-link exact :to="commond">
         <md-icon v-colors="iconcc">{{menuIcon}}</md-icon>
         <span>{{menuName}}</span>

@@ -1,10 +1,10 @@
 <template>
   <md-layout md-flex-xsmall="100" md-flex-small="50" md-flex-medium="33" md-flex-large="20" v-if="cell.isShow">
     <md-bip-input-comm :cell="cell" :modal="modal" v-if="inputType == INPUT_COMMON" :ref="cell.id"></md-bip-input-comm>
-    <md-bip-input-date :cell="cell" :modal="modal" v-if="inputType == INPUT_DATE" :ref="cell.id"></md-bip-input-date>
+    <md-bip-input-date :cell="cell" :modal="modal" v-if="inputType == INPUT_DATE" :ref="cell.id" @change="dataChange"></md-bip-input-date>
     <md-bip-input-ref  :cell="cell" :modal="modal" v-if="inputType == INPUT_REF" @change="dataChange" :ref="cell.id"></md-bip-input-ref>
     <md-bip-input-file :cell="cell" :modal="modal" v-if="inputType == INPUT_FILE" :ref="cell.id"></md-bip-input-file>
-    <md-bip-input-list :cell="cell" :modal="modal" v-if="inputType == INPUT_LIST" :ref="cell.id"></md-bip-input-list>
+    <md-bip-input-list :cell="cell" :modal="modal" v-if="inputType == INPUT_LIST" :ref="cell.id" @change="dataChange"></md-bip-input-list>
   </md-layout>
 </template>
 <script>

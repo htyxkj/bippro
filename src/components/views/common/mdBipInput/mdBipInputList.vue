@@ -1,7 +1,7 @@
 <template>
   <md-input-container>
     <label :for="cell.id">{{cell.labelString}}</label>
-    <md-select :name="cell.id" :id="cell.id" v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled">
+    <md-select :name="cell.id" :id="cell.id" v-model="modal[cell.id]" :required="cell.isReq" :disabled="disabled" @change="dataCC">
       <md-option :value="item[header[0]]" v-for="(item,index) in values" :key="index">{{item[header[1]]}}</md-option>
     </md-select>
   </md-input-container>
@@ -18,14 +18,14 @@ export default {
   },
   methods:{
     doQuery(){
-      console.log(this.cell.refValue)
+      // console.log(this.cell.refValue)
       if (this.cell.refValue) {
-        if (this.cell.refValue.indexOf('$')>0){
+        if (this.cell.refValue.indexOf('$')>0 || this.cell.refValue.indexOf('&')>0  ){
           this.getAssistDataByAPI(this.cell.refValue,this.getCallBack,this.getCallError);
         }else{
           this.header = ['code','name'];
           var selectList = this.cell.refValue.split(';');
-          console.log(selectList)
+          // console.log(selectList)
           _(this.values).take(0);
           for(let i=0;i<selectList.length;i++){
             var key = selectList[i];
@@ -39,7 +39,7 @@ export default {
       }
     },
     getCallBack(res){
-      console.log(res.data);
+      // console.log(res.data);
       var data = res.data;
       if(data.code==-1){
         this.$notify.danger({content: data.message});
@@ -60,6 +60,15 @@ export default {
     },
     getCallError(res){
       this.$notify.danger({content: res.data.message});
+    },
+    dataCC(value){
+      // console.log(value+'');
+      var refBackData = {
+          cellId:this.cell,
+          value:value,
+          multiple:false
+      };
+      this.$emit('change',refBackData);
     }
   },
   mounted () {

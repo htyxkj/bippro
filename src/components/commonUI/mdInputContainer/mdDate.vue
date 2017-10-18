@@ -49,7 +49,7 @@ export default {
   },
   watch: {
     value(value) {
-      console.log(value);
+      // console.log(value);
       value=this.formattedValue(value||moment.now());
       this.setParentValue(value);
       this.updateValues(value);

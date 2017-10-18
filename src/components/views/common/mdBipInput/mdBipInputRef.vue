@@ -71,7 +71,7 @@ export default {
         }
       }else{
         if(this.refValue !== ''){
-          console.log(this.cell.refValue,this.refValue)
+          // console.log(this.cell.refValue,this.refValue)
           this.getAssistDataByAPICout(this.cell.refValue,this.refValue,this.getCallBack,this.getCallError);
         }
       }

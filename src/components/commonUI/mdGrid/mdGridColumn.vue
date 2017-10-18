@@ -11,6 +11,13 @@ export default {
     field: { required: false, type: String },
     label: { default: null, type: String },
     dataType: { default: 'string', type: String },
+    multiple: { default: false, type: Boolean },
+
+    refType: { default: '', type: String },
+    refId: { default: '', type: String },
+    refInit: { default: v => v, type: Function },
+
+    editable: { default: false, type: Boolean },
 
     sortable: { default: false, type: Boolean },
     sortBy: { default: null },

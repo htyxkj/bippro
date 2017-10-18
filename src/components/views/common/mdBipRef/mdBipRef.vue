@@ -16,7 +16,7 @@ export default {
   mixins:[common],
   props: {'inputValue':null,'bipRefId':Object,mdNumeric: Boolean},
   mounted () {
-    if(this.inputValue)
+    // if(this.inputValue)
       this.initValue();
   },
   watch: {
@@ -33,9 +33,12 @@ export default {
       }
     },
     makeRefValue(){
+      if(this.bipRefId.refValue == '{&DATETIME}'){
+        return ;
+      }
       var refvalue = JSON.parse(window.sessionStorage.getItem(this.bipRefId.refValue));
       let isexit = false;
-      if (refvalue){
+      if (refvalue || refvalue==''){
         isexit = this.makeRef(refvalue);
       }
       if(!isexit){

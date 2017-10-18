@@ -15,12 +15,12 @@
       </div>
       <bip-menu v-for="(mm,index) in menus" :key="mm.menuId" :menuItem="mm"></bip-menu>
       <div>
-      <md-list-item>
+      <!-- <md-list-item>
         <router-link exact to="/ht">
           <md-icon>menu</md-icon>
           <span>合同管理</span>
         </router-link>
-      </md-list-item>
+      </md-list-item> -->
       <md-list-item>
         <router-link exact to="/about">
           <md-icon>folder</md-icon>

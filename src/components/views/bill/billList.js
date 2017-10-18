@@ -2,6 +2,7 @@ export default {
   methods: {
     create() {
       this.$emit('create');
+
     },
     onTableSelect(item){
       this.selectData = item;
@@ -28,10 +29,24 @@ export default {
         this.pageInfo.total = this.pages.totalItem;
         this.pageInfo.size = this.pages.pageSize;
         // this.initModal()
-        console.log(this.pages)
+        // console.log(this.pages)
       }
     },
     dblclick (row) {
+      console.log(row);
+      this.$emit('dblclick',row);
     },
-  }
+  },
+  mounted () {
+    if(this.mparams){
+      this.initUI()
+    }
+  },
+  watch: {
+    'mparams': function () {
+      if(this.mparams){
+        this.initUI()
+      }
+    }
+  },
 }

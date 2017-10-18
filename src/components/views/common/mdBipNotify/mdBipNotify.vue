@@ -63,7 +63,8 @@ export default {
         'top-left': 'fadeLeft',
         'bottom-right': 'fadeRight',
         'bottom-center': 'fadeUp',
-        'bottom-left': 'fadeLeft'
+        'bottom-left': 'fadeLeft',
+        'mid-center': 'fadeRight'
       }
     }
   },

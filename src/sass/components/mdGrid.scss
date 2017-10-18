@@ -36,7 +36,10 @@
   max-width: 100%;
   overflow: hidden;
   .md-grid-cell-container {
-    padding: 0.04rem;
+    padding: 0.0rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     .md-input-container {
       position: absolute;
       top: 0;
@@ -72,9 +75,18 @@
   th:last-child {
     border-right-width: 0;
   }
-  tr:last-child td,
-  tr:last-child th {
-    border-bottom-width: 0;
+  td.multiple,
+  th.multiple {
+    .md-grid-cell-container {
+      white-space: normal;
+    }
+  }
+  .md-grid-head,
+  .md-grid-foot {
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom-width: 0;
+    }
   }
   .md-grid-selection {
     width: 40px;
@@ -94,6 +106,7 @@
       height: 0!important;
       padding: 0!important;
       max-height: 0!important;
+      border-bottom: 0 !important;
     }
   }
 
@@ -111,12 +124,11 @@
     background-color: #f4f4f4;
     border-bottom: 2px solid #53abe6;
     position: relative;
-
     .md-grid-cell-container {
       padding-right: .07rem;
       padding-left: .08rem;
-      padding-top: .08rem;
-      padding-bottom: .07rem;
+      padding-top: .01rem;
+      padding-bottom: .01rem;
     }
     td,
     th {
@@ -142,6 +154,14 @@
         }
       }
     }
+  }
+  .md-grid-body-empty {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: rgba(73, 151, 142, 0.03);
   }
   .md-grid-body {
     background: #fff;
@@ -193,6 +213,22 @@
       height: 100%;
       top: 0;
     }
+    td.cell-focused,
+    th.cell-focused {
+      .md-input-value .md-button.md-delete {
+        display: block;
+      }
+      .md-grid-cell-container:before {
+        content: " ";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 2px solid #53abe6;
+      }
+    }
+
     tr.focused.row-focused {
       background: #009688;
       color: #fff;

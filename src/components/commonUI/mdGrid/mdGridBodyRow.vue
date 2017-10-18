@@ -1,9 +1,9 @@
 <template>
   <tr @click="rowClicked" :class="[rowClass]" @dblclick="rowDblclick">
-    <md-grid-cell type="th" v-if="multiple" class="md-grid-selection">
+    <md-grid-cell v-if="multiple" :selection="true">
       <md-checkbox v-model="selected" @change="handleSelected"></md-checkbox>
     </md-grid-cell>
-    <md-grid-cell v-for="(column,index) in visibleColumns" @click="cellClick(column,$event)" :row="row" :rowIndex="rowIndex" :colIndex="index" :key="index" :column="column"></md-grid-cell>
+    <md-grid-cell v-for="(column,index) in visibleColumns" :row="row" :key="index" :column="column"></md-grid-cell>
   </tr>
 </template>
 <script>
@@ -25,15 +25,15 @@ export default {
       selected: false,
       disabled: false,
       rowFocused: true,
-      rowId: 'row-1',
+      vueRowId: 'row-1',
       elType: 'bodyRow'
     };
   },
   watch: {
     'row.data.vueRowId' (v) {
-      this.rowId = v;
+      this.vueRowId = v;
     },
-    'rowId' () {
+    'vueRowId' () {
       this.resetStatus();
     }
   },
@@ -79,14 +79,14 @@ export default {
         this.parentTable.selectedRows[this.parentTable.pageCacheKey] = items;
       }
       if (value) {
-        items[this.rowId] = this.row.data;
+        items[this.vueRowId] = this.row.data;
       } else {
-        delete items[this.rowId];
+        delete items[this.vueRowId];
       }
     },
     handleFocused() {
       if (!this.canFireEvents) return;
-      if (!this.parentTable.focusRow || this.parentTable.focusRow.rowId != this.rowId) {
+      if (!this.parentTable.focusRow || this.parentTable.focusRow.vueRowId != this.vueRowId) {
         if (this.parentTable.focusRow) this.parentTable.focusRow.focused = false;
         this.focused = true;
         this.parentTable.focusRow = this;
@@ -100,7 +100,7 @@ export default {
         this.parentTable.$children.forEach((body, index) => {
           if (body.elType == 'body') {
             body.$children.forEach((row, index) => {
-              if (row.elType == 'bodyRow' && row.rowId != this.rowId) {
+              if (row.elType == 'bodyRow' && row.vueRowId != this.vueRowId) {
                 row.setSelected(false);
               }
             });
@@ -111,9 +111,6 @@ export default {
 
       this.parentTable.emitSeleced();
     },
-    cellClick(column, event) {
-      console.log(column, event);
-    },
   },
   mounted() {
     this.parentTable = getClosestVueParent(this.$parent, 'md-grid');
@@ -121,7 +118,7 @@ export default {
     this.autoSelect = this.parentTable.autoSelect;
     this.rowFocused = this.parentTable.rowFocused;
     if (this.row && this.row.data.vueRowId) {
-      this.rowId = this.row.data.vueRowId;
+      this.vueRowId = this.row.data.vueRowId;
     }
     this.$nextTick(() => {
       this.canFireEvents = true;

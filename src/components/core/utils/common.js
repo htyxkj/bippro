@@ -82,6 +82,10 @@ const now=function(format){
     format=format||'YYYY-MM-DD HH:mm:ss';
     return moment().format(format);
 }
+const getDate = function(value,format){
+    format=format||'YYYY-MM-DD HH:mm:ss';
+    return moment(value).format(format);
+}
 function fTime(time) {
     if (!time) return '未知..';
     //获取time距离当前的秒 
@@ -188,6 +192,7 @@ const common = {
     spread,
     fTime,
     now,
-    uid:uniqueId
+    uid:uniqueId,
+    getDate
 };
 export default common;

@@ -33,7 +33,12 @@ export default {
     },
     getCallBack(res){
       // 获取返回值
-      this.mparams = res.data.data.mparams
+      if(res.data.id==0){
+        this.mparams = res.data.data.mparams
+      }else{
+        console.log(res);
+        this.$notify.warning({content: res.data.message,placement:'mid-center'});
+      }
     },
     getCallError(res) {
       console.log(res)
