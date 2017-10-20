@@ -48,8 +48,8 @@ export default {
     // console.log(this.menus)
     // // this.$refs['mainSidenav'].close()
     window.addEventListener('hashchange', () => {
-      this.console('hashchange')
-      this._self.$refs['mainSidenav'].close()
+      //this.console('hashchange')
+      // this._self.$refs['mainSidenav'].close();
     })
   },
   components: { 'bip-menu': BipMenuItem },

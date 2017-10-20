@@ -68,7 +68,8 @@ export default {
           value:value,
           multiple:false
       };
-      this.$emit('change',refBackData);
+      if(value !== this.modal[this.cell.id])
+        this.$emit('change',refBackData);
     }
   },
   mounted () {

@@ -32,6 +32,7 @@
       </div>
       <button type="button" class="btn btn-success btn-block btn-my" @click="loginRemote">登录</button>
     </div>
+    <md-loading :loading="loading"></md-loading>
   </div>
 </template>
 
@@ -43,13 +44,15 @@ export default {
       pwd: '',
       showPwd: true,
       notShow: false,
-      type: 'password'
+      type: 'password',
+      loading:0
     }
   },
   mounted() {
   },
   methods: {
     loginRemote() {
+      this.loading++
       var psss = document.getElementById('pwd').value;
       var logindata = {
         apiId: global.APIID_LOGIN,
@@ -61,6 +64,7 @@ export default {
     },
     loginSuccess(res) {
       console.log(res)
+      this.loading--
       if (res.data.id === 0) {
         var userI = res.data.data.user;
         var mlist = res.data.data.menulist;
@@ -74,6 +78,7 @@ export default {
       }
     },
     loginError(res) {
+      this.loading--
       this.$notify.success({content: '系统连接错误！'})
     },
     showOrNot() {

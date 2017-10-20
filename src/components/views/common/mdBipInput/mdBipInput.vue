@@ -37,7 +37,11 @@ export default {
       if (this.cell) {
         if (this.cell.assist){
           if (this.cell.type ===91 || this.cell.type ===93 ) {
-            this.inputType = this.INPUT_DATE;
+            if(this.btj){
+              this.inputType = 0;
+            }else{
+              this.inputType = this.INPUT_DATE;
+            }
             return ;
           } else if (this.cell.chkRule == '{UPDOWN}') {
             this.inputType = this.INPUT_FILE;

@@ -1,15 +1,15 @@
 <template>
-  <div class="md-grid layout layout-full flex">
-    <div v-if="showFilter && filterableColumnExists" class="md-grid-filter">
+  <div class="md-bip-grid layout layout-full flex">
+    <div v-if="showFilter && filterableColumnExists" class="md-bip-grid-filter">
       <input type="text" v-model="filter" :placeholder="filterPlaceholder">
-      <a v-if="filter" @click="filter = ''" class="md-grid-filter-clear">×</a>
+      <a v-if="filter" @click="filter = ''" class="md-bip-grid-filter-clear">×</a>
     </div>
-    <div class="md-grid-wrapper layout layout-column">
-      <md-grid-head :columns="columns" :is-selected-page="isSelectedPage" :scrollLeft="scrollLeft" @sort="onSorting" :width="width"></md-grid-head>
-      <md-grid-body :columns="columns" :rows="displayedRows" :width="width" :showAdd="showAdd" :filter-no-results="filterNoResults" class="flex"></md-grid-body>
-      <md-grid-foot :columns="columns" v-if="showSum" :scrollLeft="scrollLeft" :width="width"></md-grid-foot>
-      <md-grid-actions v-if="showActions" :pager-info="pager" :showQuery="showQuery" :showAdd="showAdd" :showInsert="showInsert" :showRemove="showRemove" :showReload="showReload" :showConfirm="showConfirm" :showCancel="showCancel" @pagination="onPagination" @onQuery="onQuery" @onAdd="onAdd" @onInsert="onInsert" @onRemove="onRemove" @onReload="onReload" @onConfirm="onConfirm" @onCancel="onCancel">
-      </md-grid-actions>
+    <div class="md-bip-grid-wrapper layout layout-column">
+      <md-bip-grid-head :columns="columns" :is-selected-page="isSelectedPage" :scrollLeft="scrollLeft" @sort="onSorting" :width="width"></md-bip-grid-head>
+      <md-bip-grid-body :columns="columns" :rows="displayedRows" :width="width" :showAdd="showAdd" :filter-no-results="filterNoResults" class="flex"></md-bip-grid-body>
+      <md-bip-grid-foot :columns="columns" v-if="showSum" :scrollLeft="scrollLeft" :width="width"></md-bip-grid-foot>
+      <md-bip-grid-actions :pager-info="pager" :showQuery="showQuery" :showAdd="showAdd" :showInsert="showInsert" :showRemove="showRemove" :showReload="showReload" :showConfirm="showConfirm" :showCancel="showCancel" @pagination="onPagination" @onQuery="onQuery" @onAdd="onAdd" @onInsert="onInsert" @onRemove="onRemove" @onReload="onReload" @onConfirm="onConfirm" @onCancel="onCancel">
+      </md-bip-grid-actions>
     </div>
     <div style="display:none;">
       <slot></slot>
@@ -18,22 +18,22 @@
 </template>
 <script>
 import Column from './classes/Column';
-import localCache from '../../core/utils/localCache';
+import localCache from '@/components/core/utils/localCache';
 import Row from './classes/Row';
-import mdGridHead from './mdGridHead';
-import mdGridBody from './mdGridBody';
-import mdGridFoot from './mdGridFoot';
-import mdGridActions from './mdGridActions';
+import mdBipGridHead from './mdBipGridHead';
+import mdBipGridBody from './mdBipGridBody';
+import mdBipGridFoot from './mdBipGridFoot';
+import mdBipGridActions from './mdBipGridActions';
 import { classList } from './helpers';
-import mdGridCell from './mdGridCell';
+import mdBipGridCell from './mdBipGridCell';
 
 export default {
   components: {
-    mdGridHead,
-    mdGridBody,
-    mdGridFoot,
-    mdGridCell,
-    mdGridActions
+    mdBipGridHead,
+    mdBipGridBody,
+    mdBipGridFoot,
+    mdBipGridCell,
+    mdBipGridActions
   },
 
   props: {
@@ -61,7 +61,6 @@ export default {
     filterPlaceholder: { default: 'Filter table…' },
     filterNoResults: { default: '暂无数据！' },
     pagerSize: { default: 20, type: Number },
-    showActions:{default:true,type:Boolean}
   },
 
   data: () => ({
@@ -121,8 +120,8 @@ export default {
     },
     storageKey() {
       return this.cacheKey ?
-        `md-grid.${this.cacheKey}` :
-        `md-grid.${window.location.host}${window.location.pathname}${this.cacheKey}`;
+        `md-bip-grid.${this.cacheKey}` :
+        `md-bip-grid.${window.location.host}${window.location.pathname}${this.cacheKey}`;
     },
 
   },
@@ -327,6 +326,7 @@ export default {
     getWidth() {
       var w = 40;
       this.columns.forEach((c) => {
+        // console.log(c,c.hidden,c.label);
         if (!c.hidden)
           w += (parseInt(c.width) || 0);
       });
@@ -396,7 +396,7 @@ export default {
         }
         return v;
       }).filter(v => (v.sys_state == 'c' || v.sys_state == 'u' || v.sys_state == 'd'));
-    }
+    },
   },
   created() {
     this.sort.field = this.sortBy;

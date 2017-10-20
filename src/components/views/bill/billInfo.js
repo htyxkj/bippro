@@ -18,10 +18,17 @@ export default {
       },
       c_state: 0x200,
       billState1:0,
+      subDatas:[],
     }
   },
   props:{history:false,myModal:Object},
   methods: {
+    initUIData(){
+      console.log('uiData');
+      this.subLayCells={};
+      this.subDatas = [];
+      this.c_state = this.billState.DICT| this.billState.INSERT;
+    },
     getCallBack(res){
       if (res.data.id >= 0) {
         this.layoutCel = res.data.data.layCels;
@@ -31,28 +38,31 @@ export default {
         if(!this.history){
           this.initModal();
         }else{
-          var _self = this;
-          _.forEach(this.myModal,function(n,key){
-            _self.$set(_self.modal,key,n);
+          _.forEach(this.myModal,(n,key) => {
+            this.$set(this.modal,key,n);
           });
+          this.c_state = this.billState.DICT | this.billState.HISTORY;
           // this.modal = this.myModal;
         }
+        if(this.subCellsCount>0){
+          if(this.$refs.grid){
+            var cols = [];
+            _.forEach(this.subLayCells.cels,(cell,index)=>{
+              var col = {field:cell.id, dataType:'string', label:cell.labelString, editable:true};
+              cols.push(col);
+            });
+            this.$refs.grid.setColumns(cols);
+            this.$refs.grid.refreshStatus();
+          }
+        }
       }
+      this.loading--;
     },
-    initModal () {
+    createDataModal(cell){
+      var modal={};
       var user = JSON.parse(window.localStorage.getItem('user'));
       var deptInfo = user.deptInfo;
-      let xinc = this.layoutCel.autoInc;
-      if(xinc>0)
-        xinc = xinc-1;
-      let cel = this.layoutCel.cels[xinc];
-      // console.log(xinc,cel)
-      // console.log(this.modal[cel.id]);
-      if (xinc >=0 && !this.modal[cel.id]){
-        this.c_state = this.c_state | this.billState.INSERT;
-      }
-      for(let i = 0; i <  this.layoutCel.cels.length;i++) {
-        var item = this.layoutCel.cels[i];
+      _.forEach(cell.cels,(item,index)=>{
         let iniVl = item.initValue;
         if (iniVl == '[!]') {
           iniVl = deptInfo.deptCode;
@@ -88,15 +98,32 @@ export default {
             iniVl = parseInt(iniVl);
           }
         }
-        // this.modal[item.id] = iniVl;
-        this.$set(this.modal,item.id,iniVl);
-        var bb = this.$refs[item.id];
+        this.$set(modal,item.id,iniVl);
+      });
+      return modal;
+
+    },
+    initModal () {
+      var user = JSON.parse(window.localStorage.getItem('user'));
+      var deptInfo = user.deptInfo;
+      let xinc = this.layoutCel.autoInc;
+      if(xinc>0)
+        xinc = xinc-1;
+      let cel = this.layoutCel.cels[xinc];
+      // // console.log(xinc,cel)
+      // // console.log(this.modal[cel.id]);
+      if (xinc >=0 && !this.modal[cel.id]){
+        this.c_state = this.c_state | this.billState.INSERT;
+      }
+      this.modal = this.createDataModal(this.layoutCel);
+      _.forEach(this.modal,(key,index)=>{
+        var bb = this.$refs[key];
         if(bb){
-          var cc = bb[0].$refs[item.id];
+          var cc = bb[0].$refs[key];
           if(cc)
             cc.parentChange();
         }
-      }
+      });
       if ((this.c_state & this.billState.INSERT) >0){
         this.incCalc(this.layoutCel);
       }
@@ -190,6 +217,7 @@ export default {
       return sinc;
     },
     save(){
+      this.loading=1;
       var state = this.billState.DICT;
       if((this.c_state & this.billState.INSERT)>0){
         state = 3;
@@ -211,7 +239,7 @@ export default {
       this.saveData(options,this.saveSuccess,this.saveErr);
     },
     saveSuccess(res){
-      console.log(res);
+      console.log(res,'save');
       if(res.data.id == 0){
         if((this.c_state & this.billState.INSERT)>0){
           var data = res.data.data;
@@ -226,14 +254,19 @@ export default {
           this.$notify.success({content: '删除成功！'});
           this.c_state = this.billState.INSERT | this.billState.DICT;
           this.initModal();
+          return ;
+        }else{
+          this.$notify.success({content: '保存成功！'});
         }
       }else{
         console.log(res);
         this.$notify.danger({content: res.data.message});
       }
+      this.loading--;
     },
     saveErr(res){
       console.log(res);
+      this.loading--;
     },
     checkNotNull(){
       for(let i=0;i<this.layoutCel.cels.length;i++){
@@ -260,7 +293,8 @@ export default {
   watch: {
     'mparams': function () {
       if(this.mparams){
-        this.initUI()
+        this.initUIData();
+        this.initUI();
       }
     }
   },

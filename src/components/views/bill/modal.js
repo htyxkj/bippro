@@ -25,7 +25,8 @@ export default {
       mdAutoSelect: false,
       mdSelection: false,
       selectData:[],
-      subCellsCount: 0
+      subCellsCount: 0,
+      loading:0
     }
   },
   methods: {
@@ -41,6 +42,7 @@ export default {
       this.fetchUIData();
     },
     fetchUIData () {
+      this.loading++;
       var data1 = {
         'dbid': global.DBID,
         'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
@@ -58,6 +60,7 @@ export default {
     },
 
     getCallError (res) {
+      // this.loading = 0;
     },
     numRed (vals,cell) {
       if(cell.type === 3 &&vals<0)

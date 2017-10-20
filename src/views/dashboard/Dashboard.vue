@@ -38,7 +38,7 @@
                 </md-list-item>
               </md-list>
             </md-tab>
-            <md-tab md-label="待办事宜" :md-options="{new_badge: 3}">
+            <md-tab md-label="待办事宜" >
               <md-table class="flex">
                 <md-table-header>
                   <md-table-row>
@@ -55,24 +55,23 @@
               </md-table>
             </md-tab>
             <md-tab md-label="最新邮件">
-              <md-list class="custom-list md-triple-line">
-                <md-list-item v-for="item in model.knowledges" :key="item.id">
-                  <div class="md-list-text-container">
-                    <span>{{ item.title }}</span>
-                    <p>{{ item.summary }}</p>
-                  </div>
-                  <md-button class="md-icon-button md-list-action">
-                    <md-icon class="md-primary">star</md-icon>
-                  </md-button>
-                  <md-divider></md-divider>
-                </md-list-item>
-              </md-list>
+              <!-- <md-grid :datas="datas" :auto-load="true" :row-focused="false">
+                <md-grid-column field="id" label="id" :width="50" />
+                <md-grid-column field="code" label="编码" :width="50"  editable/>
+                <md-grid-column field="name" label="名称" :width="150"  />
+                <md-grid-column field="date" label="日期" :width="150"  :formatter="formatter" />
+              </md-grid> -->
+              <md-grid :datas="datas" :auto-load="true" :row-focused="false" :multiple="false" :showActions="false">
+                <md-grid-column v-for="(item,index) in cols" :key="index" :field="item.field" :label="item.label" :width="item.width" :hidden="item.field ==='id'" :headerClass="hdcls" :cellClass="hdcls"/>
+              </md-grid>
             </md-tab>
           </md-tabs>
         </md-card>
       </md-layout>
+      <md-loading :loading="loading"></md-loading>
     </md-layout>
   </md-layout>
+  
 </template>
 <script>
 import _ from 'lodash';
@@ -87,15 +86,6 @@ export default {
       model: {
         news: [
           { sid: '1', title: '测试', content: '' },
-        ],
-        prices: [
-          { id: '1', title: '测试', price: 100 },
-          { id: '2', title: 'xxxx1', price: 100 },
-          { id: '3', title: 'xxxx2', price: 100 },
-          { id: '4', title: 'xxxx3', price: 100 },
-          { id: '5', title: 'xxxx4', price: 100 },
-          { id: '6', title: 'xxxx5', price: 100 },
-          { id: '7', title: 'xxxx6', price: 100 },
         ]
       },
       pieChart: pieC.bar,
@@ -103,16 +93,21 @@ export default {
       lineChart: lineC.chart,
       taskLayCel: {},
       taskValues: [],
-      xsValues: []
+      xsValues: [],
+      loading:0,
+      datas:[],
+      cols:[],
+      hdcls:'biphead'
 
     }
   },
-  mounted() {
-    //SYGG
+  created(){
     this.doQuery();
+    this.getDatas({});
   },
   methods: {
     doQuery() {
+      this.loading++
       var option = {
         'pageSize': 20,
         'page': 1,
@@ -128,7 +123,7 @@ export default {
         this.model.news = res.data.values;
     },
     getCallError(res) {
-
+      this.loading--
     },
     fetchTaskData() {
       var data1 = {
@@ -166,6 +161,7 @@ export default {
       }
     },
     getXSCallBack(res) {
+      this.loading--
       if (res.data.id == 0) {
         this.xsValues = res.data.data.pages.celData;
         var sers = [];
@@ -199,11 +195,24 @@ export default {
       }
       return false;
     },
+    getDatas({ pager, filter, sort }) {
+      var datas = [
+        { id: 'John', code: 'Lennon1', name: 'Guitar', date: '04/10/1940', type_enum: 'indect' },
+        { id: 'John1', code: 'Lennon1', name: 'Guitar1', date: '04/10/1950', type_enum: 'indect' },
+        { id: 'John2', code: 'Lennon1', name: 'Guitar2', date: '04/10/1960', type_enum: 'indect' },
+      ];
+      var cols = [{field:'id',label:'Id',width:30},{field:'code',label:'编码',width:30},{field:'name',label:'名称',width:200},{field:'date',label:'合同日期',width:100},{field:'type_enum',label:'类型',width:40}];
+      this.cols = cols;
+      this.datas = datas;
+    },
+    formatter(value, columnProperties){
+      return `Hi, ${value}`;
+    },
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .md-card {
   margin: 0.15rem;
 }
@@ -212,5 +221,15 @@ export default {
   .md-card {
     margin: 0;
   }
+}
+// .md-grid-body .flex tr{
+//   &.md-grid-table tr{
+//     height: 60px;
+//   }
+// }
+.md-grid-table{
+  tr{
+    height: 60px;
+  } 
 }
 </style>

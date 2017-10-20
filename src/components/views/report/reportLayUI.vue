@@ -6,7 +6,7 @@
         <md-button @click.native="clear">清空</md-button>
       </md-part-toolbar-group>
       <md-part-toolbar-group>
-        <md-button>复制</md-button>
+        <!-- <md-button>复制</md-button> -->
       </md-part-toolbar-group>
       <md-part-toolbar-group>
         <md-button @click.native="list()">列表</md-button>
@@ -26,7 +26,7 @@
     <md-part-body>
       <md-content class="flex layout-column">
         <md-layout md-gutter="4" v-if="showCont&&hasTJ">
-          <md-bip-input v-for="(cell, index) in contCel.cels" :key="cell.id" :cell="cell" :modal="modal" :is-search="true" v-if="cell.isShow"></md-bip-input>
+          <md-bip-input v-for="(cell, index) in contCel.cels" :key="cell.id" :cell="cell" :modal="modal" :is-search="true" v-if="cell.isShow" :btj="true" @change="tjChange"></md-bip-input>
         </md-layout>
         <md-layout class="flex" v-if="!groupTJ">
           <md-table-card>
@@ -64,6 +64,7 @@
             </md-table-tool>
           </md-table-card>
         </md-layout>
+        <md-loading :loading="loading"></md-loading>
         <md-layout class="flex" v-if="groupTJ">
            <md-bip-chart :groupfilds="groupfilds" :groupdatafilds="groupdatafilds" :modal="modal" :pcell="layoutCel.obj_id" :doSearch="doSearCh" :searchCelId="contCel.obj_id" :ptjCell="tjcell" :ptjPage="tjpage" :chartType="ctype" :showChart="showChart"></md-bip-chart>
         </md-layout>
@@ -143,7 +144,8 @@ export default {
       chartList:[{id:'pie',name:'饼图'},{id:'line',name:'线图'},{id:'column',name:'柱状图'}],
       showChart:true,
       checkShowC:1,
-      initSC:true
+      initSC:true,
+      loading:0
     } 
   },
   mixins:[common,reportformat],
@@ -161,6 +163,7 @@ export default {
         'pageSize': this.pageInfo.size,
         'cellid': ''
       }
+      this.loading++
       if (this.mparams.pcell) {
         this.getDataByAPINew(data1,this.getCallBack,this.getCallError)
       }
@@ -172,6 +175,7 @@ export default {
     },
     getCallBack(res){
       console.log(res)
+      this.loading = 0;
       if (res.data.id === 0) {
         this.contCel = res.data.data.contCel;
         this.groupTJ = res.data.data.bcount;
@@ -228,7 +232,7 @@ export default {
       }
     },
     getCallError (res) {
-
+      this.loading = 0;
     },
     dblclick (row) {
 
@@ -248,7 +252,17 @@ export default {
     initUI () {
       this.vdatas = {};
       this.pages = {};
+      this.modal = {};
       this.fetchUIData();
+    },
+    tjChange(data){
+      var celId = data.cellId;
+      if(data.cols){
+        this.$set(this.modal,celId.id,data.value[data.cols[0]]);
+      }else{
+        this.$set(this.modal,celId.id,data.value);
+      }
+      console.log(data);
     }
   },
   watch: {

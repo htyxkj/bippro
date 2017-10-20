@@ -28,7 +28,7 @@ export default {
       disabled: false
     }
   },
-  props: {cell:Object,isSearch: {Boolean,default:false},modal:{}},
+  props: {cell:Object,isSearch: {Boolean,default:false},modal:{},btj:{default:false,type:Boolean}},
   mounted () {
     if(this.cell) {
       let notedit = this.cell.attr&this.NOTEDIT;

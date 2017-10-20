@@ -31,6 +31,7 @@ export default {
         // this.initModal()
         // console.log(this.pages)
       }
+      this.loading --;
     },
     dblclick (row) {
       console.log(row);

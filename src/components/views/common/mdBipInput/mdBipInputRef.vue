@@ -109,10 +109,13 @@ export default {
     getCallError(res){
       this.$notify.danger({content: res.data.message});
     },
-    parentChange(){
-      // console.log('parentChange');
-      this.initVV();
-    }
-  },  
+    // parentChange(){
+    //   console.log('parentChange');
+    //   this.initVV();
+    // }
+  }, 
+  watch:{
+    'modal':'initVV'
+  } 
 }
 </script>

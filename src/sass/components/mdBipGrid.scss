@@ -1,11 +1,11 @@
-.md-pagination {
+.md-bip-pagination {
   color: #404040;
   .md-select {
     width: auto;
     min-width: .36rem;
     margin: 0 .1rem;
   }
-  .md-pagination-info {
+  .md-bip-pagination-info {
     min-width: .7rem;
     text-align: center;
   }
@@ -16,28 +16,27 @@
 }
 
 @include layout-small {
-  .md-pagination {
-    .md-pagination-label {
+  .md-bip-pagination {
+    .md-bip-pagination-label {
       display: none;
     }
     .md-select {
       display: none;
     }
-    .md-pagination-info {
+    .md-bip-pagination-info {
       display: none;
     }
   }
 }
 
-.md-grid {
+.md-bip-grid {
   border: 1px solid #c7c7c7;
   background: #fff;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
-  .md-grid-cell-container {
+  .md-bip-grid-cell-container {
     padding: 0.0rem;
-    padding-left: 0.07rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -78,21 +77,21 @@
   }
   td.multiple,
   th.multiple {
-    .md-grid-cell-container {
+    .md-bip-grid-cell-container {
       white-space: normal;
     }
   }
-  .md-grid-head,
-  .md-grid-foot {
+  .md-bip-grid-head,
+  .md-bip-grid-foot {
     tr:last-child td,
     tr:last-child th {
       border-bottom-width: 0;
     }
   }
-  .md-grid-selection {
+  .md-bip-grid-selection {
     width: 40px;
     position: relative;
-    >.md-grid-cell-container {
+    >.md-bip-grid-cell-container {
       text-align: center !important;
       padding: 0!important;
       margin: 0!important;
@@ -101,7 +100,7 @@
       margin: 0;
     }
   }
-  .md-grid-empty-row {
+  .md-bip-grid-empty-row {
     td,
     th {
       height: 0!important;
@@ -111,21 +110,21 @@
     }
   }
 
-  .md-grid-wrapper {
+  .md-bip-grid-wrapper {
     width: 100%;
     border-bottom: none;
   }
-  .md-grid-table {
+  .md-bip-grid-table {
     border-collapse: collapse;
     table-layout: fixed;
     position: relative;
   }
-  .md-grid-head {
+  .md-bip-grid-head {
     overflow: hidden;
     background-color: #f4f4f4;
     border-bottom: 2px solid #53abe6;
     position: relative;
-    .md-grid-cell-container {
+    .md-bip-grid-cell-container {
       padding-right: .07rem;
       padding-left: .08rem;
       padding-top: .01rem;
@@ -133,7 +132,8 @@
     }
     td,
     th {
-      color: #999;
+      color: #353535;
+      height: .4rem;
       text-transform: uppercase;
       white-space: nowrap;
       text-align: left;
@@ -156,7 +156,7 @@
       }
     }
   }
-  .md-grid-body-empty {
+  .md-bip-grid-body-empty {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -164,7 +164,7 @@
     left: 0px;
     background: rgba(73, 151, 142, 0.03);
   }
-  .md-grid-body {
+  .md-bip-grid-body {
     background: #fff;
     color: #000;
     overflow: auto;
@@ -173,6 +173,7 @@
       .is-tool {
         overflow: visible;
         position: relative;
+
         .md-grid-cell-container {
           z-index: -1;
           position: absolute;
@@ -192,16 +193,20 @@
         }
       }
       &:hover {
-        .is-tool>.md-grid-cell-container {
+        .is-tool>.md-bip-grid-cell-container {
           z-index: inherit;
         }
       }
       &:nth-child(even) {
-        background-color: #DFDEDE;
+        background-color: #f9f9f9;
       }
       &.selected {
         background-color: #80cbc4;
       }
+      &tbody tr {
+        height: .4rem;
+      }
+      // min-height: 0.35rem;
     }
     tr:hover>:first-child:before,
     tr.focused>:first-child:before {
@@ -218,7 +223,7 @@
       .md-input-value .md-button.md-delete {
         display: block;
       }
-      .md-grid-cell-container:before {
+      .md-bip-grid-cell-container:before {
         content: " ";
         position: absolute;
         top: 0;
@@ -228,7 +233,9 @@
         border: 2px solid #53abe6;
       }
     }
-
+    .md-bip-data-rows{
+      height: .35rem;
+    }
     tr.focused.row-focused {
       background: #009688;
       color: #fff;
@@ -238,14 +245,14 @@
       }
     }
   }
-  .md-grid-foot {
+  .md-bip-grid-foot {
     overflow: hidden;
     background-color: #fafafa;
     border-top: 1px solid #dfdfdf;
     min-height: .4rem;
     position: relative;
   }
-  .md-grid-actions {
+  .md-bip-grid-actions {
     background-color: #fafafa;
     border-top: 1px solid #dfdfdf;
     min-height: .4rem;

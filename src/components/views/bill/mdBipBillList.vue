@@ -53,6 +53,7 @@
               </md-table-pagination>
             </md-table-tool>
           </md-table-card>
+          <md-loading :loading="loading"></md-loading>
          </md-layout>
       </md-content>
     </md-part-body>
