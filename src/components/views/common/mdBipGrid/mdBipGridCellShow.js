@@ -8,7 +8,6 @@ export default {
     const type = 'div';
     data.class = data.class || [];
     data.domProps = data.domProps || {};
-
     if (props.column && props.column.template) {
       return createElement(type, data, props.column.template(props.row.data));
     }

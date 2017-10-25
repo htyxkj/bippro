@@ -5,6 +5,7 @@ import mdBipInputList from './mdBipInputList'
 import mdBipInput from './mdBipInput.vue';
 import mdBipInputRef from './mdBipInputRef.vue';
 import mdBipDia from './mdBipDia.vue';
+import mdBipInputEntity from './mdBipInputEntity'
 export default function install(Vue) {
   if (install.installed) {
     console.warn('Vue core is already installed.');
@@ -17,6 +18,7 @@ export default function install(Vue) {
   Vue.component('md-bip-dia', mdBipDia);
   Vue.component('md-bip-input-ref', mdBipInputRef);
   Vue.component('md-bip-input', mdBipInput);
+  Vue.component('md-bip-input-entity',mdBipInputEntity);
   
 
 }

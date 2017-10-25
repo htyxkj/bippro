@@ -17,6 +17,7 @@ export default {
           multiple:false
       };
       if(value !== this.modal[this.cell.id])
+        // this.modal[this.cell.id] = value;
         this.$emit('change',refBackData);
     }
   }

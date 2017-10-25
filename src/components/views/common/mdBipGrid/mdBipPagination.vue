@@ -7,7 +7,7 @@
     <md-button class="md-icon-button md-bip-pagination-next" @click.native="nextPage" :disabled="shouldDisable">
       <md-icon>keyboard_arrow_right</md-icon>
     </md-button>
-    <span class="md-bip-pagination-label">每页11:</span>
+    <span class="md-bip-pagination-label">每页:</span>
     <md-select v-model="currentSize" md-container="" md-menu-class="md-bip-pagination-select" @change="changeSize" v-if="options">
       <md-option v-for="amount in options" :key="amount" :value="amount">{{ amount }}</md-option>
     </md-select>

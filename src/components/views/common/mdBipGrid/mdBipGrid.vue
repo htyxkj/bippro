@@ -19,6 +19,7 @@
 <script>
 import Column from './classes/Column';
 import localCache from '@/components/core/utils/localCache';
+import billState from '../../bill/billState';
 import Row from './classes/Row';
 import mdBipGridHead from './mdBipGridHead';
 import mdBipGridBody from './mdBipGridBody';
@@ -229,6 +230,7 @@ export default {
       data.sys_deleted = data.sys_deleted || false;
       data.sys_updated = data.sys_updated || false;
       data.sys_created = data.sys_created || false;
+      data.sys_stated = data.sys_stated || billState.DICT;
       return new Row(data, this.columns);
     },
 
@@ -369,10 +371,12 @@ export default {
       if (this._.isArray(datas)) {
         datas.forEach((data) => {
           data.sys_created = true;
+          data.sys_stated = billState.INSERT;
           this.rows.push(this.formatDataToRow(data));
         });
       } else {
         datas.sys_created = true;
+        datas.sys_stated = billState.INSERT;
         this.rows.push(this.formatDataToRow(datas));
       }
     },

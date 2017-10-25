@@ -7,7 +7,7 @@ export default {
     const type = 'div';
     data.class = data.class || [];
     data.domProps = data.domProps || {};
-
+    // console.log(context);
     if (props.column && props.column.templateEditor) {
       return createElement(type, data, props.column.templateEditor(props.row.data));
     }

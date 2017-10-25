@@ -11,7 +11,19 @@ export default class Row {
   getValue(columnName) {
     const column = this.getColumn(columnName);
     if (column && column.dataType === 'entity') {
-      columnName += '.name';
+      // columnName += '.name';
+      var id = this.data[column.field];
+      var val = null;
+      if(column.refValues&&column.refValues.values){
+        _.forEach(column.refValues.values,(item,index)=>{
+          if(item[column.refValues.cols[0]] === id){
+            val = item[column.refValues.cols[1]];
+          }
+        });
+      }
+      if(val){
+        return val;
+      }
       return get(this.data, columnName);
     }
     if (column && column.dataType === 'enum') {
@@ -22,7 +34,9 @@ export default class Row {
   getValueKey(columnName){
     const column = this.getColumn(columnName);
     if (column && column.dataType === 'entity') {
-      columnName += '.id';
+      // columnName += '.id';
+      console.log('getKey entity');
+      console.log(columnName,this.data);
       return get(this.data, columnName);
     }
     return get(this.data, columnName);
@@ -42,7 +56,6 @@ export default class Row {
     if (!value) {
       return '';
     }
-
     return value.toString().toLowerCase();
   }
 

@@ -6,12 +6,12 @@
       </template>
       <template v-else-if="column&&column.dataType=='entity'">
         <md-input-container>
-          <md-input-ref :md-ref-id="column.refId||column.refType" @init="on_init_ref" v-model="row.data[column.field]"></md-input-ref>
+          <md-bip-input-entity :mdRefId="column.refId||column.refType" @init="on_init_ref" v-model="row.data[column.field]"></md-bip-input-entity>
         </md-input-container>
       </template>
       <template v-else-if="column&&column.dataType=='enum'">
         <md-input-container>
-          <md-enum :md-enum-id="column.refId||column.refType" v-model="row.data[column.field]"></md-enum>
+          <md-bip-enum :md-enum-id="column.refId||column.refType" v-model="row.data[column.field]"></md-bip-enum>
         </md-input-container>
       </template>
       <template v-else-if="column&&column.dataType=='date'">
@@ -97,12 +97,16 @@ export default {
         this.parentTable.focusCell = this;
         this.status = 'editor';
       }
+      // console.log(this.status);
     },
     endEdit() {
+      // console.log('endEdit',this.status,this.column.field);
       if (this.status == 'editor') {
         const newValue = this.row.getValueKey(this.column.field);
+        // console.log(newValue,'newValue',this.oldValue);
         if (newValue != this.oldValue) {
           this.row.data.sys_updated = true;
+          this.$emit('rowChange',this.row.data,this.column);
         }
       }
       this.status = 'display'

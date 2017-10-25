@@ -40,6 +40,7 @@ export default {
       if(data){
         data.cellId = this.cell;
         this.refData = data;
+        this.refData.value = data.value[0];
         this.$emit('change',data);
         this.makeRefInput(data);
       }

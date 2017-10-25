@@ -35,7 +35,7 @@
         </md-content>
         <md-layout class="flex layout-column" v-if="subCellsCount>0">
           <md-bip-grid :datas="subDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" @onRemove="onRemove" :showAdd="true" :showRemove="true">
-            <md-bip-grid-column v-for="(item,itemIndex) in subLayCells.cels" :key="item.id" v-if="item.isShow" :label="item.labelString" :field="item.id" editable>
+            <md-bip-grid-column v-for="(item,itemIndex) in subLayCells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.chkRule||item.refValue" :dataType="getDataType(item)">
             </md-bip-grid-column>
           </md-bip-grid>
           <!-- <md-table-card class="flex">
@@ -67,8 +67,9 @@ export default {
   mixins: [modalcm, billInfo],
   methods: {
     dataChange(data) {
+      console.log('data change');
       if (!data.multiple) {
-        console.log(data);
+        console.log(data,this.modal.sys_stated);
         if (data.cellId.assist && data.cellId.type == 12) {
           // this.modal[data.cellId.id] = data.value[data.cols[0]];
           var vvl = "";
@@ -79,7 +80,7 @@ export default {
           }
           if(this.modal[data.cellId.id] !== vvl){
             this.$set(this.modal, data.cellId.id,vvl);
-            this.c_state = this.c_state | this.billState.EDITED;
+            this.modal.sys_stated = this.modal.sys_stated | this.billState.EDITED;
           }
           var cellScript = data.cellId.script;
           if (cellScript) {
@@ -95,20 +96,23 @@ export default {
               cc.parentChange();
             }
           }
+        }else{
+          this.$set(this.modal,'sys_stated',(this.modal.sys_stated | this.billState.EDITED));
+          // this.modal.sys_stated = this.modal.sys_stated | this.billState.EDITED;
         }
       }
-      if ((this.c_state & this.billState.INSERT) > 0) {
+      if ((this.modal.sys_stated & this.billState.INSERT) > 0) {
         this.incCalc(this.layoutCel);
       }
     },
     create() {
-      this.c_state = this.billState.INSERT | this.billState.DICT;
       this.initModal();
     },
     onLineAdd(){
       var subCell = this.layoutCel.subLayCells[0];
       console.log(subCell);
-      var childModal = this.createDataModal(subCell);
+      var childModal ={}
+      childModal = this.createDataModal(subCell,childModal);
       console.log(childModal);
       var bb = subCell.autoInc;
       var _cid = this.subDatas.length;
@@ -118,16 +122,21 @@ export default {
         _cid++;
       }
       childModal[subCell.cels[bb].id] = _cid;
+      childModal.sys_created = true;
+      this.$set(childModal,'sys_stated',(this.billState.INSERT | this.billState.EDITED));
       if(this.subDatas){
         this.subDatas.push(childModal);
       }
     },
     onRemove(rows){
-      if(rows.length == this.subDatas.length){
-        _.take(this.subDatas,0);
-      }
-      console.log(rows);
-      console.log(this.subDatas,'subDatas');
+      _.forEach(rows.data,(rowItem)=>{
+        _.remove(this.subDatas,(item,n)=>{
+          return item.vueRowId === rowItem.vueRowId;
+        });
+      });
+      // console.log(rows);
+      // console.log(this.$refs.grid);
+      this.$refs.grid.onReload();
     },
     getWidth(cel){
       // console.log(cel.id,cel.ccLeng,cel);
@@ -135,6 +144,33 @@ export default {
       //   return cel.ccLeng+20;
       // }
       return 150;
+    },
+    getChildData (modal) {
+      console.log('getChildData');
+      var pkcel = this.layoutCel.cels[this.layoutCel.pkid];
+      var pkkey = pkcel.id;
+      var count = {};
+      count[pkkey] = modal[pkkey];
+      count = JSON.stringify(count);
+      var data1 = {
+        'dbid': global.DBID,
+        'usercode': JSON.parse(window.localStorage.getItem('user')).userCode,
+        'apiId': global.APIID_CELLPARAM,
+        'pcell': this.mparams.pcell,
+        'pdata': count,
+        'bebill': this.mparams.beBill ? 1 : 2,
+        'currentPage': 1,
+        'pageSize': 20,
+        'cellid': this.layoutCel.subLayCells[0].obj_id
+      }
+      console.log(data1);
+      this.getDataByAPINew(data1,this.getCallChildBack,this.getCallError);
+    },
+    getCallChildBack(res){
+      console.log(res,'321321');
+      if(res.data.id==0){
+        this.subDatas = res.data.data.pages.celData;
+      }
     }
   },
   watch: {
@@ -144,23 +180,23 @@ export default {
   },
   computed: {
     canCreate() {
-      if ((this.c_state & this.billState.INSERT) > 0 || (this.c_state & this.billState.EDITED) > 0) {
+      if ((this.modal.sys_stated & this.billState.INSERT) > 0 || (this.modal.sys_stated & this.billState.EDITED) > 0) {
         return true;
-      } else {
+      }else {
         return false;
       }
     },
     canSave() {
-      if ((this.c_state & this.billState.INSERT) > 0 || (this.c_state & this.billState.EDITED) > 0) {
+      if ((this.modal.sys_stated & this.billState.INSERT) > 0 || (this.modal.sys_stated & this.billState.EDITED) > 0) {
         return false;
       }
-      if (((this.c_state & this.billState.POSTED) > 0)) {
+      if (((this.modal.sys_stated & this.billState.POSTED) > 0)) {
         return true;
       }
       return true;
     },
     canDelete() {
-      if ((this.c_state & this.billState.INSERT) > 0) {
+      if ((this.modal.sys_stated & this.billState.INSERT) > 0) {
         return true;
       }
       return false;

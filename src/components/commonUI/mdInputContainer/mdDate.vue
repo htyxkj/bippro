@@ -19,6 +19,7 @@ import moment from 'moment';
 export default {
   mixins: [common],
   props: {
+    btime:false,
     option: {
       type: Object,
       default () {
@@ -27,7 +28,7 @@ export default {
           SundayFirst: false,
           week: ['一', '二', '三', '四', '五', '六', '日'],
           month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-          format: 'YYYY-MM-DD',
+          format: this.btime ? 'YYYY-MM-DD HH:mm:ss':'YYYY-MM-DD',
           color: {
             checked: '#F50057',
             header: '#3f51b5',
@@ -45,12 +46,15 @@ export default {
       }
     },
     disabled:false,
-    btime:false
   },
   watch: {
     value(value) {
       // console.log(value);
-      value=this.formattedValue(value||moment.now());
+      if(value === '' || value===undefined){
+        value = '';
+      }else{
+        value=this.formattedValue(value||moment.now());
+      }
       this.setParentValue(value);
       this.updateValues(value);
       this.updateValue(value);

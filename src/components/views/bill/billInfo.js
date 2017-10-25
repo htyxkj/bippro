@@ -1,22 +1,23 @@
 import common from '../../core/utils/common.js';
 import qs from 'qs'
+import billS from './billState';
 export default {
   data(){
     return {
-      billState: {
-        INSERT: 1, //--新增
-        EDITED: 2, //值改变
-        DELETE: 4, //加删除标志
-        EDITSUB: 8, //字表改变
-        EDITEDPK: 0x10, //主键改变
-        IMPORT: 0x20, //这主要用于导入记录(结合INSERT使用,保存时先做更新,不存在时再做插入)
-        REPLACESUB: 0x40, //(替换子表)修改前先删除子表
-        HISTORY: 0x80,//历史数据(仅做为显示用)
-        COPY: 0x100,//从其它记录拷贝过来
-        DICT: 0x200,//记录经过动态字典处理后,置上该标记。
-        POSTED: 0x400 ////记录已提交过
-      },
-      c_state: 0x200,
+      // billState: {
+      //   INSERT: 1, //--新增
+      //   EDITED: 2, //值改变
+      //   DELETE: 4, //加删除标志
+      //   EDITSUB: 8, //字表改变
+      //   EDITEDPK: 0x10, //主键改变
+      //   IMPORT: 0x20, //这主要用于导入记录(结合INSERT使用,保存时先做更新,不存在时再做插入)
+      //   REPLACESUB: 0x40, //(替换子表)修改前先删除子表
+      //   HISTORY: 0x80,//历史数据(仅做为显示用)
+      //   COPY: 0x100,//从其它记录拷贝过来
+      //   DICT: 0x200,//记录经过动态字典处理后,置上该标记。
+      //   POSTED: 0x400 ////记录已提交过
+      // },
+      billState: billS,
       billState1:0,
       subDatas:[],
     }
@@ -27,7 +28,9 @@ export default {
       console.log('uiData');
       this.subLayCells={};
       this.subDatas = [];
-      this.c_state = this.billState.DICT| this.billState.INSERT;
+      this.modal = {};
+      // this.$set(this.modal,sys_stated,this.billState.DICT | this.billState.HISTORY);
+      // this.c_state = this.billState.DICT| this.billState.INSERT;
     },
     getCallBack(res){
       if (res.data.id >= 0) {
@@ -41,14 +44,17 @@ export default {
           _.forEach(this.myModal,(n,key) => {
             this.$set(this.modal,key,n);
           });
-          this.c_state = this.billState.DICT | this.billState.HISTORY;
-          // this.modal = this.myModal;
+          if(this.layoutCel.haveChild){
+            this.getChildData(this.modal);
+          }
+          this.$set(this.modal,sys_stated,this.billState.DICT | this.billState.HISTORY);
+          // this.modal.sys_stated = this.billState.DICT | this.billState.HISTORY;
         }
         if(this.subCellsCount>0){
           if(this.$refs.grid){
             var cols = [];
             _.forEach(this.subLayCells.cels,(cell,index)=>{
-              var col = {field:cell.id, dataType:'string', label:cell.labelString, editable:true};
+              var col = {field:cell.id, dataType:this.getDataType(cell), label:cell.labelString, editable:true,hidden:!cell.isShow};
               cols.push(col);
             });
             this.$refs.grid.setColumns(cols);
@@ -58,8 +64,22 @@ export default {
       }
       this.loading--;
     },
-    createDataModal(cell){
-      var modal={};
+    getDataType(item){
+      if(item.type == 91 || item.type == 93) {
+        return 'date';
+      }
+      if(item.type<12){
+        return 'numeric';
+      }
+      if(item.assist){
+        return 'entity';
+      }
+      if(item.editType===1){
+        return 'enum';
+      }
+      return 'string';
+    },
+    createDataModal(cell,modal){
       var user = JSON.parse(window.localStorage.getItem('user'));
       var deptInfo = user.deptInfo;
       _.forEach(cell.cels,(item,index)=>{
@@ -112,10 +132,14 @@ export default {
       let cel = this.layoutCel.cels[xinc];
       // // console.log(xinc,cel)
       // // console.log(this.modal[cel.id]);
+      // this.modal.sys_stated = this.billState.DICT;
+      this.$set(this.modal,'sys_stated',this.billState.DICT);
       if (xinc >=0 && !this.modal[cel.id]){
-        this.c_state = this.c_state | this.billState.INSERT;
+        // this.modal.sys_stated = this.modal.sys_stated | this.billState.INSERT;
+        this.$set(this.modal,'sys_stated',(this.modal.sys_stated | this.billState.INSERT));
+        // this.c_state = this.c_state | this.billState.INSERT;
       }
-      this.modal = this.createDataModal(this.layoutCel);
+      this.modal = this.createDataModal(this.layoutCel,this.modal);
       _.forEach(this.modal,(key,index)=>{
         var bb = this.$refs[key];
         if(bb){
@@ -124,7 +148,7 @@ export default {
             cc.parentChange();
         }
       });
-      if ((this.c_state & this.billState.INSERT) >0){
+      if ((this.modal.sys_stated & this.billState.INSERT) >0){
         this.incCalc(this.layoutCel);
       }
     },
@@ -218,41 +242,44 @@ export default {
     },
     save(){
       this.loading=1;
-      var state = this.billState.DICT;
-      if((this.c_state & this.billState.INSERT)>0){
-        state = 3;
-      }else{
-        state = this.c_state;
+      // var state = this.billState.DICT;
+      if((this.modal.sys_stated & this.billState.INSERT)>0){
+        this.modal.sys_stated = 3;
+        this.$set(this.modal,'sys_stated',3);
       }
-      console.log(state);
+      if(this.subCellsCount>0){
+        var cc = this.layoutCel.subLayCells[0];
+        this.$set(this.modal,cc.obj_id,this.subDatas);
+      }
       var str = JSON.stringify(this.modal);
       var isnull = this.checkNotNull();
       if(!isnull){
-        var options = {'pcell': this.mparams.pcell, 'jsonstr': str,'state':state};
+        var options = {'pcell': this.mparams.pcell, 'jsonstr': str};
         this.saveData(options,this.saveSuccess,this.saveErr);
       }
     },
     delData(){
-      this.c_state = 4;
+      this.modal.sys_stated = 4;
       var str = JSON.stringify(this.modal);
-      var options = {'pcell': this.mparams.pcell, 'jsonstr': str,'state':this.c_state};
+      var options = {'pcell': this.mparams.pcell, 'jsonstr': str};
       this.saveData(options,this.saveSuccess,this.saveErr);
     },
     saveSuccess(res){
       console.log(res,'save');
       if(res.data.id == 0){
-        if((this.c_state & this.billState.INSERT)>0){
+        if((this.modal.sys_stated & this.billState.INSERT)>0){
           var data = res.data.data;
           var _self = this;
           _.forEach(data, function(val, key) {
             // console.log(val, key);
             _self.$set(_self.modal,key,val);
           });
-          this.c_state  = this.billState.POSTED;
+          this.modal.sys_stated  = this.billState.POSTED;
+          console.log(this.modal.sys_stated);
         }
-        if(this.c_state == 4) {
+        if((this.modal.sys_stated & this.billState.DELETE)>0) {
           this.$notify.success({content: '删除成功！'});
-          this.c_state = this.billState.INSERT | this.billState.DICT;
+          this.modal = {};
           this.initModal();
           return ;
         }else{
@@ -296,6 +323,9 @@ export default {
         this.initUIData();
         this.initUI();
       }
+    },
+    'modal': function(){
+      console.log('modal change');
     }
   },
 }

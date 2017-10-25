@@ -169,7 +169,7 @@ export default {
         };
         refBackData.cols = this.allCols;
         if(!this.multiple){
-          refBackData.value = this.selectedRows[0];
+          refBackData.value[0] = this.selectedRows[0];
         }else{
           refBackData.multiple = true;
           refBackData.value = this.selectedRows;
