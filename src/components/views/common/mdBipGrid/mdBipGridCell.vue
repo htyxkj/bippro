@@ -34,6 +34,7 @@
 import getClosestVueParent from '@/components/core/utils/getClosestVueParent';
 import mdBipGridCellShow from './mdBipGridCellShow';
 import mdBipGridCellEdit from './mdBipGridCellEdit';
+import billState from '../../bill/billState';
 export default {
   components: {
     mdBipGridCellShow,
@@ -91,9 +92,11 @@ export default {
         if (this.parentTable.focusCell) {
           this.parentTable.focusCell.endEdit();
         }
-        if (!this.row.data.sys_updated) {
-          this.oldValue = this.row.getValueKey(this.column.field);
-        }
+        // if (!this.row.data.sys_updated) {
+        //   console.log('begin edit',this.column.field,this.oldValue)
+        //   this.oldValue = this.row.getValueKey(this.column.field);
+        // }
+        this.oldValue = this.row.getValueKey(this.column.field);
         this.parentTable.focusCell = this;
         this.status = 'editor';
       }
@@ -103,10 +106,12 @@ export default {
       // console.log('endEdit',this.status,this.column.field);
       if (this.status == 'editor') {
         const newValue = this.row.getValueKey(this.column.field);
-        // console.log(newValue,'newValue',this.oldValue);
-        if (newValue != this.oldValue) {
+        console.log(newValue,'newValue',this.column.field,this.oldValue);
+        if (newValue != this.oldValue && (newValue || this.oldValue)) {
+          this.checkGS();
           this.row.data.sys_updated = true;
-          this.$emit('rowChange',this.row.data,this.column);
+          this.row.data.sys_stated = this.row.data.sys_stated | billState.EDITED;
+          this.parentTable.rowChange(this.row.data,this.column);
         }
       }
       this.status = 'display'
@@ -114,6 +119,46 @@ export default {
     on_init_ref(options, event) {
       this.column && this.row && this.column.refInit && this.column.refInit(options, this.row.data, event);
     },
+    checkGS(){
+      const attr = this.column.attr;
+      if((attr&0x100000)>0){
+        this.checkMulCols();      
+      }
+      _.forEach(this.row.columns,col => {
+        let scstr = col.script;
+        if(scstr&&scstr.indexOf('=:')===0){
+          scstr = scstr.replace('=:','');
+          console.log(scstr);
+          // 拆分公式
+        }
+      })
+      console.log(this.row);
+    },
+    // 多列计算
+    checkMulCols(){
+      var script = this.column.script;
+      if(script){
+        script = script.split('&');
+        var cols = script[0].split(',');
+        var _indexs = script[1].split(',');
+        var refValues = this.column.refValues;
+        var id = this.row.data[this.column.field];
+        var refInfo;
+        if(refValues){
+          _.forEach(refValues.values,(item ,n)=> {
+            if(item[refValues.cols[0]] === id){
+              refInfo = item;
+            }
+          });
+        }
+        if(refInfo){
+          _.forEach(cols,(col,n)=>{
+            var vv = refInfo[refValues.cols[_indexs[n]]];
+            this.$set(this.row.data,col,vv)
+          });
+        }
+      }
+    }
   },
   mounted() {
     this.parentTable = getClosestVueParent(this.$parent, 'md-bip-grid');

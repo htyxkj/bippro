@@ -109,7 +109,7 @@ export default {
       }
       this.loading++;
       iterable && iterable.then(response => {
-        this.$set(this.model, 'main', response.data.data || {});
+        // this.$set(this.model, 'main', response.data.data || {});
         this.afterSave(response.data.data);
         this.loading--;
         this.$toast(this.$lang.LANG_SAVESUCCESS);

@@ -6,7 +6,7 @@
         :disabled="disabled"
         :key="columnIndex"
         @delete="deleteChip(chip)">
-        <slot :value="chip"><span>{{ chip.name }}</span></slot>
+        <slot :value="chip"><span>{{ chip[cols[0]] }}</span></slot>
       </md-input-value>
       <md-input
         v-show="canEdit"
@@ -72,6 +72,7 @@ export default {
       // if (!common.isObject(value)) {
       //   value = null;
       // }
+      console.log(value);
       this.setValue(value);
     },
     selectedValues(v) {
@@ -88,19 +89,8 @@ export default {
   },
   methods: {
     setValue(value) {
-      if (!common.isObject(value)) {
-        value = null;
-      }
-      if (!value) {
-        this.selectedValues = [];
-      } else {
-        if (common.isArray(value)) {
-          this.selectedValues = value;
-        } else {
-          this.selectedValues = [value];
-        }
-      }
-      this.setParentValue(this.selectedValues);
+      console.log('select values',this.selectedValues);
+      this.setParentValue(value);
     },
     openRef() {
       this.refIsOpened = true;
@@ -109,7 +99,7 @@ export default {
     },
     onRefOpen(type) {},
     onRefClose(resdata) {
-      console.log('hahaha');
+      console.log('hahaha',resdata);
       if(resdata){
         this.refInfo = resdata;
         this.refData = this.refInfo.value;
@@ -127,6 +117,7 @@ export default {
         this.$parent.$parent.column.refValues.values = [];
       }
       if (!this.multiple) this.selectedValues = [];
+      console.log(data,'data');
       data &&
         data.forEach((row, index) => {
           console.log(row,'fsfds');
@@ -228,21 +219,25 @@ export default {
         // return this.selectedValues.length ? this.selectedValues[0] : null;
       }
       return this.selectedValues;
-    }
+    },
+    getCallBack(res){
+      console.log(res);
+    },
+    getCallError(res){}
   },
-  // created(){
-  //     // this.loadData(this.mdEnumId);
-  //   // this.setTextAndValue(this.value);
-  //   console.log(11);
-  //   this.setValue(this.value);
-  // },
   mounted() {
     // this.setValue(this.value);
-    console.log(this.value,11);
+    console.log(this.value,11,this.currentInputValue);
+    // this.getRefValues();
     this.currentInputValue = this.value;
-    if(this.$parent.$parent.column.refValues&& this.$parent.$parent.column.refValues.values){
-      console.log( this.$parent.$parent.column.refValues.values);
-    }
+    // if(this.$parent.$parent.column.refValues&& this.$parent.$parent.column.refValues.values){
+    //   let _idx = this.getColumnValueIndex(this.value);
+    //   this.selectedValues = [];
+    //   console.log(_idx);
+    //   this.selectedValues[0] = this.$parent.$parent.column.refValues.values[_idx];
+    //   console.log('mounted',this.$parent.$parent.column.refValues.values);
+    // }
+    // console.log('mounted',this.selectedValues);
     this.$nextTick(() => {
       this.parentContainer = getClosestVueParent(
         this.$parent,

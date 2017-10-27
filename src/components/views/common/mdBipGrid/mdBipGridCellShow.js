@@ -15,7 +15,7 @@ export default {
       return createElement(type, data, context.children);
     }
     if (props.column && props.column.formatter) {
-      const v = props.column.formatter(props.row.getValue(props.column.field), props.row.data);
+      const v = props.column.formatter(props.row.getValue(props.column.field), props.row.data,props.column);
       return createElement(type, data, v);
     } else {
       const v = (props.row && props.row.getValue(props.column.field)) || '';

@@ -110,7 +110,7 @@ export default {
       this.setSelected(value);
 
       this.parentTable.emitSeleced();
-    },
+    }
   },
   mounted() {
     this.parentTable = getClosestVueParent(this.$parent, 'md-bip-grid');

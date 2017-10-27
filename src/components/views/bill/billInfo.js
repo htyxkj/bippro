@@ -20,6 +20,7 @@ export default {
       billState: billS,
       billState1:0,
       subDatas:[],
+      delDatas:[],
     }
   },
   props:{history:false,myModal:Object},
@@ -47,14 +48,14 @@ export default {
           if(this.layoutCel.haveChild){
             this.getChildData(this.modal);
           }
-          this.$set(this.modal,sys_stated,this.billState.DICT | this.billState.HISTORY);
+          this.$set(this.modal,'sys_stated',this.billState.DICT | this.billState.HISTORY);
           // this.modal.sys_stated = this.billState.DICT | this.billState.HISTORY;
         }
         if(this.subCellsCount>0){
           if(this.$refs.grid){
             var cols = [];
             _.forEach(this.subLayCells.cels,(cell,index)=>{
-              var col = {field:cell.id, dataType:this.getDataType(cell), label:cell.labelString, editable:true,hidden:!cell.isShow};
+              var col = {field:cell.id, dataType:this.getDataType(cell), label:cell.labelString, editable:true,hidden:!cell.isShow,script:cell.script,attr:cell.attr};
               cols.push(col);
             });
             this.$refs.grid.setColumns(cols);
@@ -123,21 +124,16 @@ export default {
       return modal;
 
     },
-    initModal () {
+    initModal (isNew) {
       var user = JSON.parse(window.localStorage.getItem('user'));
       var deptInfo = user.deptInfo;
       let xinc = this.layoutCel.autoInc;
       if(xinc>0)
         xinc = xinc-1;
       let cel = this.layoutCel.cels[xinc];
-      // // console.log(xinc,cel)
-      // // console.log(this.modal[cel.id]);
-      // this.modal.sys_stated = this.billState.DICT;
       this.$set(this.modal,'sys_stated',this.billState.DICT);
-      if (xinc >=0 && !this.modal[cel.id]){
-        // this.modal.sys_stated = this.modal.sys_stated | this.billState.INSERT;
+      if ((xinc >=0 && !this.modal[cel.id])|| isNew){
         this.$set(this.modal,'sys_stated',(this.modal.sys_stated | this.billState.INSERT));
-        // this.c_state = this.c_state | this.billState.INSERT;
       }
       this.modal = this.createDataModal(this.layoutCel,this.modal);
       _.forEach(this.modal,(key,index)=>{
@@ -148,9 +144,10 @@ export default {
             cc.parentChange();
         }
       });
-      if ((this.modal.sys_stated & this.billState.INSERT) >0){
+      if (((this.modal.sys_stated & this.billState.INSERT) >0)){
         this.incCalc(this.layoutCel);
       }
+      this.subDatas = [];
     },
     incCalc(cell){
       if(cell){
@@ -241,7 +238,6 @@ export default {
       return sinc;
     },
     save(){
-      this.loading=1;
       // var state = this.billState.DICT;
       if((this.modal.sys_stated & this.billState.INSERT)>0){
         this.modal.sys_stated = 3;
@@ -249,11 +245,26 @@ export default {
       }
       if(this.subCellsCount>0){
         var cc = this.layoutCel.subLayCells[0];
-        this.$set(this.modal,cc.obj_id,this.subDatas);
+        // this.modal[cc.obj_id] = [];
+        // this.$set(this.modal,cc.obj_id,[]);
+        if(!cc.unNull&&this.subDatas.length==0){
+          this.$notify.warning({content: '子表数据不能为空！',placement:'mid-center'});
+          return ;
+        }else{
+          this.$set(this.modal,cc.obj_id,this.subDatas);
+        }
+        console.log(this.modal);
+        if(this.delDatas.length>0){
+          _.forEach(this.delDatas,(item,index)=>{
+            this.modal[cc.obj_id].push(item);
+          });
+        }
       }
+      console.log(this.modal);
       var str = JSON.stringify(this.modal);
       var isnull = this.checkNotNull();
       if(!isnull){
+        this.loading=1;
         var options = {'pcell': this.mparams.pcell, 'jsonstr': str};
         this.saveData(options,this.saveSuccess,this.saveErr);
       }
@@ -274,8 +285,11 @@ export default {
             // console.log(val, key);
             _self.$set(_self.modal,key,val);
           });
-          this.modal.sys_stated  = this.billState.POSTED;
+          this.$set(this.modal,'sys_stated', this.billState.POSTED);
           console.log(this.modal.sys_stated);
+          if(this.subDatas&&this.subDatas.length>0){
+            _.forEach(this.subDatas,row => row.sys_stated = this.billState.POSTED);
+          }
         }
         if((this.modal.sys_stated & this.billState.DELETE)>0) {
           this.$notify.success({content: '删除成功！'});

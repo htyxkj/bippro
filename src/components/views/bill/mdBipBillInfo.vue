@@ -34,8 +34,8 @@
           </md-layout>
         </md-content>
         <md-layout class="flex layout-column" v-if="subCellsCount>0">
-          <md-bip-grid :datas="subDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" @onRemove="onRemove" :showAdd="true" :showRemove="true">
-            <md-bip-grid-column v-for="(item,itemIndex) in subLayCells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.chkRule||item.refValue" :dataType="getDataType(item)">
+          <md-bip-grid :datas="subDatas" ref="grid" :row-focused="false" :auto-load="true" @onAdd="onLineAdd" @onRemove="onRemove" :showAdd="true" :showRemove="true" @rowChange="rowChange">
+            <md-bip-grid-column v-for="(item,itemIndex) in subLayCells.cels" :key="item.id" :label="item.labelString" :field="item.id" editable :hidden="!item.isShow" :refId="item.chkRule||item.refValue" :script="item.script" :attr="item.attr" :ccPoint="item.ccPoint" :dataType="getDataType(item)" :formatter="formatter">
             </md-bip-grid-column>
           </md-bip-grid>
           <!-- <md-table-card class="flex">
@@ -63,6 +63,7 @@
 <script>
 import modalcm from './modal.js';
 import billInfo from './billInfo.js';
+import common from '../../core/utils/common.js';
 export default {
   mixins: [modalcm, billInfo],
   methods: {
@@ -106,7 +107,7 @@ export default {
       }
     },
     create() {
-      this.initModal();
+      this.initModal(true);
     },
     onLineAdd(){
       var subCell = this.layoutCel.subLayCells[0];
@@ -131,11 +132,20 @@ export default {
     onRemove(rows){
       _.forEach(rows.data,(rowItem)=>{
         _.remove(this.subDatas,(item,n)=>{
-          return item.vueRowId === rowItem.vueRowId;
+          if (item.vueRowId === rowItem.vueRowId){
+            item.sys_stated = 4;
+            if((this.modal.sys_stated &this.billState.INSERT)==0)
+              this.delDatas.push(item);
+            return true;
+          }
+          return false;
         });
       });
       // console.log(rows);
       // console.log(this.$refs.grid);
+      if(rows.data){
+        this.modal.sys_stated = this.modal.sys_stated | this.billState.EDITED;
+      }
       this.$refs.grid.onReload();
     },
     getWidth(cel){
@@ -171,15 +181,29 @@ export default {
       if(res.data.id==0){
         this.subDatas = res.data.data.pages.celData;
       }
+    },
+    rowChange(rowData,column){
+      console.log('grid Row Change',rowData,column);
+      console.log(this.modal.sys_stated,rowData.sys_stated);
+      this.modal.sys_stated = this.modal.sys_stated | this.billState.EDITED;
+    },
+    formatter(value,data,column){
+      if(column.dataType === 'numeric'){
+        let pit = column.ccPoint;
+        value = common.formatDecimal(value,{precision: pit});
+        // data[column.field] = value;
+        return value;
+      }
+      return value;
     }
   },
   watch: {
     'modal': function() {
-      // console.log('modal change');
     }
   },
   computed: {
     canCreate() {
+      if((this.modal.sys_stated&this.billState.DICT)>0) return false;
       if ((this.modal.sys_stated & this.billState.INSERT) > 0 || (this.modal.sys_stated & this.billState.EDITED) > 0) {
         return true;
       }else {

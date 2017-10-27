@@ -32,6 +32,9 @@ export default {
     cellClass: { default: '' },
     headerClass: { default: '' },
     width: { default: '150px' },
+    script:{default:'',type:String},
+    attr:{default:0,type: Number},
+    ccPoint:{default:0,type:Number}
   },
 };
 </script>

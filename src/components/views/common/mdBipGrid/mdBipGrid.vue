@@ -380,6 +380,10 @@ export default {
         this.rows.push(this.formatDataToRow(datas));
       }
     },
+    rowChange(row,column){
+      // console.log('rowChange',row,column);
+      this.$emit('rowChange', row,column);
+    },
     getAllDatas() {
       const datas = [];
       this._.forEach(this.cacheRows, (cv, ck) => {
