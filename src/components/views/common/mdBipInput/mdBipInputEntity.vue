@@ -64,7 +64,7 @@ export default {
       canEdit: true,
       refIsOpened: false,
       refOptions: { wheres: {}, orders: {} },
-      cols:[],
+      cols: []
     };
   },
   watch: {
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     setValue(value) {
-      console.log('select values',this.selectedValues);
+      console.log("select values", this.selectedValues);
       this.setParentValue(value);
     },
     openRef() {
@@ -99,31 +99,37 @@ export default {
     },
     onRefOpen(type) {},
     onRefClose(resdata) {
-      console.log('hahaha',resdata);
-      if(resdata){
+      if (resdata) {
         this.refInfo = resdata;
-        this.refData = this.refInfo.value;
+        // this.refData = this.refInfo.value;
+      }else if(this.value){
+        var parentRefs = this.$parent.$parent.column.refValues;
+        this.refInfo.cols = parentRefs.cols;
+        this.refInfo.value = [];
+        var vv = this.value.split(';')||this.value.split(',')
+        vv.forEach(v =>{
+          parentRefs.values.forEach(item=>{
+            if(item[this.refInfo.cols[0]]==v){
+              this.refInfo.value.push(item);
+            }
+          });
+        });
       }
       var data = this.refInfo.value;
       this.cols = this.refInfo.cols;
-      console.log(this.selectedValues,this.value,this.refInfo);
       this.refIsOpened = false;
       if (!data || data.length == 0) return;
-      console.log(this.$parent.$parent.column,'ffff');
-      if(this.$parent.$parent.column.refValues == undefined){
+      if (this.$parent.$parent.column.refValues == undefined) {
         this.$parent.$parent.column.refValues = {};
         this.$parent.$parent.column.refValues.cols = this.refInfo.cols;
         this.$parent.$parent.column.refValues.multiple = this.refInfo.multiple;
         this.$parent.$parent.column.refValues.values = [];
       }
       if (!this.multiple) this.selectedValues = [];
-      console.log(data,'data');
       data &&
         data.forEach((row, index) => {
-          console.log(row,'fsfds');
           this.addValue(row);
         });
-        console.log(this.$parent.$parent.column,'ffff');
     },
     applyInputFocus() {
       this.$nextTick(() => {
@@ -148,8 +154,7 @@ export default {
       if (index < 0) {
         this.selectedValues.push(value);
         const _ii = this.getColumnValueIndex(value);
-        if(_ii < 0)
-          this.$parent.$parent.column.refValues.values.push(value)
+        if (_ii < 0) this.$parent.$parent.column.refValues.values.push(value);
         const nv = this.formatValue();
         this.$emit("input", nv);
         this.$emit("change", nv);
@@ -176,10 +181,16 @@ export default {
     },
     getValueIndex(value) {
       for (var i = 0; i < this.selectedValues.length; i++) {
-        if (value[this.cols[0]] && this.selectedValues[i][this.cols[0]] == value[this.cols[0]]) {
+        if (
+          value[this.cols[0]] &&
+          this.selectedValues[i][this.cols[0]] == value[this.cols[0]]
+        ) {
           return i;
         }
-        if (value[this.cols[1]] && this.selectedValues[i][this.cols[1]] == value[this.cols[1]]) {
+        if (
+          value[this.cols[1]] &&
+          this.selectedValues[i][this.cols[1]] == value[this.cols[1]]
+        ) {
           return i;
         }
       }
@@ -187,12 +198,20 @@ export default {
     },
     getColumnValueIndex(value) {
       var values = this.$parent.$parent.column.refValues.values;
-      for (var i = 0; i < values.length&&values; i++) {
-        if (value[this.cols[0]] && values[i][this.cols[0]] == value[this.cols[0]]) {
-          return i;
-        }
-        if (value[this.cols[1]] && values[i][this.cols[1]] == value[this.cols[1]]) {
-          return i;
+      if (values) {
+        for (var i = 0; i < values.length; i++) {
+          if (
+            value[this.cols[0]] &&
+            values[i][this.cols[0]] == value[this.cols[0]]
+          ) {
+            return i;
+          }
+          if (
+            value[this.cols[1]] &&
+            values[i][this.cols[1]] == value[this.cols[1]]
+          ) {
+            return i;
+          }
         }
       }
       return -1;
@@ -210,34 +229,22 @@ export default {
     },
     formatValue() {
       if (!this.multiple) {
-        if(this.selectedValues.length){
+        if (this.selectedValues.length) {
           this.currentInputValue = this.selectedValues[0][this.cols[0]];
           return this.selectedValues[0][this.cols[0]];
-        }else{
-          return '';
+        } else {
+          return "";
         }
         // return this.selectedValues.length ? this.selectedValues[0] : null;
       }
       return this.selectedValues;
     },
-    getCallBack(res){
+    getCallBack(res) {
       console.log(res);
     },
-    getCallError(res){}
+    getCallError(res) {}
   },
   mounted() {
-    // this.setValue(this.value);
-    console.log(this.value,11,this.currentInputValue);
-    // this.getRefValues();
-    this.currentInputValue = this.value;
-    // if(this.$parent.$parent.column.refValues&& this.$parent.$parent.column.refValues.values){
-    //   let _idx = this.getColumnValueIndex(this.value);
-    //   this.selectedValues = [];
-    //   console.log(_idx);
-    //   this.selectedValues[0] = this.$parent.$parent.column.refValues.values[_idx];
-    //   console.log('mounted',this.$parent.$parent.column.refValues.values);
-    // }
-    // console.log('mounted',this.selectedValues);
     this.$nextTick(() => {
       this.parentContainer = getClosestVueParent(
         this.$parent,

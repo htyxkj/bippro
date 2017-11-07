@@ -75,9 +75,10 @@ export default {
       console.log(this.selectData);
       var _self = this;
       _.forEach(this.selectData,function(n,key){
+        n.sys_stated = 4;
         var str = JSON.stringify(n);
         //  console.log(str);
-        var options = {'pcell': _self.mparams.pcell, 'jsonstr': str,'state':4};
+        var options = {'pcell': _self.mparams.pcell, 'jsonstr': str};
         _self.saveData(options,_self.delSuccess,_self.delError);
       });
       this.$notify.success({content: '删除成功！'});

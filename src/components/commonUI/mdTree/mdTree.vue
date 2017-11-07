@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <li v-for="node in nodes">
+    <li v-for="(node,index) in nodes" :key="index" >
       <md-tree-node :node="node" :md-selection="mdSelection" :md-auto-select="mdAutoSelect">
         <slot :value="node"></slot>
       </md-tree-node>

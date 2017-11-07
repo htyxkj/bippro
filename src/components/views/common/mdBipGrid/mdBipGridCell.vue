@@ -92,21 +92,20 @@ export default {
         if (this.parentTable.focusCell) {
           this.parentTable.focusCell.endEdit();
         }
-        // if (!this.row.data.sys_updated) {
-        //   console.log('begin edit',this.column.field,this.oldValue)
-        //   this.oldValue = this.row.getValueKey(this.column.field);
-        // }
         this.oldValue = this.row.getValueKey(this.column.field);
         this.parentTable.focusCell = this;
         this.status = 'editor';
       }
-      // console.log(this.status);
     },
     endEdit() {
       // console.log('endEdit',this.status,this.column.field);
       if (this.status == 'editor') {
-        const newValue = this.row.getValueKey(this.column.field);
-        console.log(newValue,'newValue',this.column.field,this.oldValue);
+        let newValue = this.row.getValueKey(this.column.field);
+        if(this.column.dataType == 'numeric'){
+          newValue = new Number(newValue).toFixed(this.column.ccPoint);
+          this.$set(this.row.data,this.column.field,newValue);
+        }
+        // console.log(newValue,'newValue',this.column.field,this.oldValue);
         if (newValue != this.oldValue && (newValue || this.oldValue)) {
           this.checkGS();
           this.row.data.sys_updated = true;
@@ -128,11 +127,14 @@ export default {
         let scstr = col.script;
         if(scstr&&scstr.indexOf('=:')===0){
           scstr = scstr.replace('=:','');
-          console.log(scstr);
-          // 拆分公式
+          // 公式计算
+          this.row.scriptProc.execute(scstr,null,col);
+          // console.log(vl,this.row.data,col.field);
+          // this.data[col.field] = vl;
+          // this.$set(this.row.data,col.field,vl);
         }
       })
-      console.log(this.row);
+      // console.log(this.row);
     },
     // 多列计算
     checkMulCols(){
@@ -154,7 +156,14 @@ export default {
         if(refInfo){
           _.forEach(cols,(col,n)=>{
             var vv = refInfo[refValues.cols[_indexs[n]]];
-            this.$set(this.row.data,col,vv)
+            // console.log(vv,col);
+            if(vv){
+              var cl = this.row.getColumn(col);
+              if ( cl.dataType == 'numeric' ) {
+                vv = new Number(vv).toFixed(cl.ccPoint);
+              }
+              this.$set(this.row.data,col,vv)
+            }
           });
         }
       }

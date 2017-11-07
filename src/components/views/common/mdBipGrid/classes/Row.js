@@ -5,10 +5,12 @@ import set from 'lodash/set';
 import enumCache from '../../../../core/utils/enumCache';
 import axios from 'axios';
 import qs from 'qs';
+import ScriptProc from './ScriptProc'
 export default class Row {
   constructor(data, columns) {
     this.data = data;
     this.columns = columns;
+    this.scriptProc = new ScriptProc(data,columns);
   }
   getValue(columnName) {
     const column = this.getColumn(columnName);

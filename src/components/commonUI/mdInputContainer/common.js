@@ -51,6 +51,7 @@ export default {
     setParentValue(value) {
       if(this.mdContainer&&this.parentContainer){
         var elValue=this.getElementValue();
+        // console.log(elValue,value);
         this.parentContainer.setValue(value || elValue);
       }
     },
