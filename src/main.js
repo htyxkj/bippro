@@ -11,7 +11,7 @@ import App from './views/app/myApp';
 
 import './sass/app.scss';
 
-import './js/bip-common-js.js'
+import '../static/bip-common-js.js'
 import utils from './js/bip-utils-js'
 import bipDateUtil from './js/bip-date-js'
 Vue.use(utils)

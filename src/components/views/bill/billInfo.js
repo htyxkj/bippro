@@ -40,7 +40,7 @@ export default {
         this.subLayCells =  this.subCellsCount >0 ? this.layoutCel.subLayCells[0]: null;
         console.log('hs',this.history)
         if(!this.history){
-          this.initModal();
+           this.initModal();
         }else{
           _.forEach(this.myModal,(n,key) => {
             this.$set(this.modal,key,n);
@@ -66,17 +66,17 @@ export default {
       this.loading--;
     },
     getDataType(item){
-      if(item.type == 91 || item.type == 93) {
+      if(item.type == 91 || item.type == 93 || item.chkRule=='{DATE}' || item.chkRule=='{DATETIME}') {
         return 'date';
-      }
-      if(item.type<12){
-        return 'numeric';
       }
       if(item.assist){
         return 'entity';
       }
-      if(item.editType===1){
+      if(item.editType == 1){
         return 'enum';
+      }
+      if(item.type<12){
+        return 'numeric';
       }
       return 'string';
     },
@@ -100,6 +100,9 @@ export default {
         if((iniVl == '[Y-M-D]' || iniVl === '0') && item.type === 93){
           iniVl = common.now();
         }
+        if(iniVl == '[Y-M-D]'){
+          iniVl = common.now('YYYY-MM-DD');
+        }
         if(iniVl == '[YMD]'){
           iniVl = common.now('YYYYMMDD');
         }
@@ -111,6 +114,9 @@ export default {
         }
         if(iniVl == '[Y-M]'){
           iniVl = common.now('YYYY-MM');
+        }
+        if(iniVl == '[Y2-M]'){
+          iniVl = common.now('YY-MM');
         }
         if(item.type<=5){
           if(iniVl == undefined)

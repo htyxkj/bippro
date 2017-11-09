@@ -1,7 +1,7 @@
-// global.BIPAPIURL = 'http://115.28.191.203:8080/dabo/api'
-// global.DBID = '01'
-global.BIPAPIURL = 'http://192.168.0.104:9999/jd/api';
-global.DBID = 'ZT1';
+global.BIPAPIURL = 'http://115.28.191.203:8080/safema/api'
+global.DBID = '01'
+// global.BIPAPIURL = 'http://192.168.0.107:9999/jd/api';
+// global.DBID = 'ZT1';
 global.APIID_MPARAMS = 'mparam';
 global.APIID_CELLPARAM = 'cellparam';
 global.APIID_MENUPARAM = 'menuparam';

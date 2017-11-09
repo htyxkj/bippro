@@ -16,7 +16,11 @@ export default {
   mounted () {
     if(this.mparams){
       // this.initUI()
+      this.blist = true;
     }
+  },
+  updated (){
+    
   },
   mixins:[modalCC],
   methods:{

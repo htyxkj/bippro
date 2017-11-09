@@ -7,9 +7,9 @@
       <md-part-toolbar-group>
         <md-button @click.native="delList">删除</md-button>
       </md-part-toolbar-group>
-      <md-part-toolbar-group>
-      </md-part-toolbar-group>
-      <md-part-toolbar-pager @paging="paging" :options="pager"></md-part-toolbar-pager>
+      <!-- <md-part-toolbar-group>
+      </md-part-toolbar-group> -->
+      <!-- <md-part-toolbar-pager @paging="paging" :options="pager"></md-part-toolbar-pager> -->
       <span class="flex"></span>
       <md-part-toolbar-crumbs>
         <md-part-toolbar-crumb>{{mdTitle}}</md-part-toolbar-crumb>

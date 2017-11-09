@@ -163,18 +163,18 @@ export default {
         pageSize: 20,
         cellid: this.layoutCel.subLayCells[0].obj_id
       };
-      console.log(data1);
+      // console.log(data1);
       this.getDataByAPINew(data1, this.getCallChildBack, this.getCallError);
     },
     getCallChildBack(res) {
-      console.log(res, "321321");
+      // console.log(res, "321321");
       if (res.data.id == 0) {
         this.subDatas = res.data.data.pages.celData;
       }
     },
     rowChange(rowData, column) {
-      console.log("grid Row Change", rowData, column);
-      console.log(this.modal.sys_stated, rowData.sys_stated);
+      // console.log("grid Row Change", rowData, column);
+      // console.log(this.modal.sys_stated, rowData.sys_stated);
       this.modal.sys_stated = this.modal.sys_stated | this.billState.EDITED;
     },
     formatter(value, data, column) {
